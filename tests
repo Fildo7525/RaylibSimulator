@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+pushd ./build/test
+make -j16
+./test
+popd
+

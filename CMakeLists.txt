@@ -17,6 +17,7 @@ set(HEADERS
 )
 
 add_subdirectory(src)
+add_subdirectory(test)
 
 add_executable(${PROJECT_NAME}
 	${SOURCES}
