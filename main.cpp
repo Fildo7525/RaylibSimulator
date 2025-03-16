@@ -1,8 +1,16 @@
-#include "first.h"
+#include "app.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
-	std::cout << "Hello World!\n";
+	Application::Config config{
+		.fps = 60,
+		.screenHeight = 450,
+		.screenWidth = 800,
+		.windowTitle = "Raylib App",
+	};
+
+	Application app(config);
+	app.run();
+
 	return 0;
 }
-
