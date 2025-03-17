@@ -10,8 +10,26 @@ namespace rl
 
 struct Model
 {
+	Model(const std::string &modelPath, const std::string &texturePath, const Vector3 &position, float scale)
+		: modelPath(modelPath)
+		, texturePath(texturePath)
+		, position(position)
+		, scale(scale)
+	{
+	}
+
+	Model(const std::string &modelPath, const std::string &texturePath)
+		: modelPath(modelPath)
+		, texturePath(texturePath)
+		, position(Vector3{ 0.0f, 0.0f, 0.0f })
+		, scale(1.0f)
+	{
+	}
+
 	std::string modelPath;
 	std::string texturePath;
+	Vector3 position;
+	float scale;
 };
 
 class ImageLoader

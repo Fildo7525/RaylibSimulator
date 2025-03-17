@@ -6,7 +6,6 @@ rl::Object::Object(const rl::Model &model)
 	: m_rlModel(model)
 	, m_model(nullptr)
 {
-
 	std::println("Model path {}", m_rlModel.modelPath);
 	std::println("Texture path {}", m_rlModel.texturePath);
 }
@@ -23,7 +22,7 @@ void rl::Object::loadModel()
 
 void rl::Object::draw() const
 {
-	DrawModel(*m_model, (Vector3){ 0.0f, -8.0f, 0.0f }, 1.0f, WHITE);   // Draw 3d model with texture
+	DrawModel(*m_model, m_rlModel.position, m_rlModel.scale, WHITE);   // Draw 3d model with texture
 	DrawGrid(10, 10.0f);
 }
 
