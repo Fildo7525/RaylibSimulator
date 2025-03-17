@@ -24,7 +24,7 @@ public:
 		int screenWidth;
 		std::string windowTitle;
 		std::pair<int, int> windowPosition;
-		::Camera camera;
+		::Camera *camera = nullptr;
 	};
 
 	explicit Application(const Config& config);

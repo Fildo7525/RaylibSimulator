@@ -10,7 +10,7 @@ int main(void)
 		.screenHeight = 450,
 		.screenWidth = 800,
 		.windowTitle = "Raylib App",
-		.camera{ 0 },
+		.camera = nullptr,
 	};
 
 	rl::Application app(config);

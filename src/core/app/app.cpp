@@ -8,7 +8,6 @@ namespace rl
 
 Application::Application(const Config& config)
 	: m_config(config)
-	, m_camera(m_config.camera)
 {
 	SetTargetFPS(m_config.fps);
 
@@ -25,11 +24,16 @@ Application::Application(const Config& config)
 		m_config.opacity = 1.0f;
 	}
 
-	m_camera.position = (Vector3){ 0.0f, 50.0f, -120.0f };// Camera position perspective
-	m_camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };	  // Camera looking at point
-	m_camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };		  // Camera up vector (rotation towards target)
-	m_camera.fovy = 30.0f;								// Camera field-of-view Y
-	m_camera.projection = CAMERA_PERSPECTIVE;			 // Camera type
+	if (m_config.camera == nullptr) {
+		m_camera.position = (Vector3){ 0.0f, 50.0f, -120.0f };// Camera position perspective
+		m_camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };	  // Camera looking at point
+		m_camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };		  // Camera up vector (rotation towards target)
+		m_camera.fovy = 30.0f;								// Camera field-of-view Y
+		m_camera.projection = CAMERA_PERSPECTIVE;			 // Camera type
+	}
+	else {
+		m_camera = *m_config.camera;
+	}
 
 	m_config.onInit(*this);
 }
