@@ -1,19 +1,22 @@
 #include "app.h"
+#include "loader.h"
 
 int main(void)
 {
-	Application::Config config{
+	rl::Application::Config config{
 		.fps = 60,
 		.monitor = 1,
 		.screenHeight = 450,
 		.screenWidth = 800,
 		.windowTitle = "Raylib App",
-		.models = {
-			{ "../assets/models/plane.obj", "../assets/textures/plane_diffuse.png" }
-		},
+		.camera{ 0 },
 	};
 
-	Application app(config);
+	rl::Application app(config);
+
+	rl::Object plane(rl::Model{ "../assets/models/plane.obj", "../assets/textures/plane.png" });
+	app.addObject(plane);
+
 	app.run();
 
 	return 0;

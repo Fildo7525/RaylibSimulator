@@ -20,5 +20,5 @@ PUBLIC
 target_link_libraries(
 	app_lib
 PUBLIC
-	raylib
+	object_lib
 )
