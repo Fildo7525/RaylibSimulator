@@ -27,11 +27,6 @@ void rl::Object::draw() const
 	DrawGrid(10, 10.0f);
 }
 
-void rl::Object::update()
-{
-
-}
-
 rl::Model rl::Object::rlModel() const
 {
 	return m_rlModel;

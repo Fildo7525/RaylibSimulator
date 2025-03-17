@@ -21,4 +21,5 @@ target_link_libraries(
 	plane_lib
 PUBLIC
 	object_lib
+	quat_lib
 )

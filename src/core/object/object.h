@@ -14,13 +14,15 @@ class Object
 	friend class std::hash<rl::Object>;
 
 public:
+	using Ptr = std::shared_ptr<Object>;
+
 	Object(const rl::Model &model);
-	~Object();
+	virtual ~Object();
 
 	void loadModel();
 
 	void draw() const;
-	void update();
+	virtual void update() = 0;
 
 	rl::Model rlModel() const;
 	std::shared_ptr<::Model> model() const;

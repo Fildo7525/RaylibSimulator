@@ -1,5 +1,6 @@
 #include "app.h"
-#include "loader.h"
+
+#include "plane.h"
 
 int main(void)
 {
@@ -14,8 +15,7 @@ int main(void)
 
 	rl::Application app(config);
 
-	rl::Object plane(rl::Model{ PLANE_MODEL_PATH, PLANE_TEXTURE_PATH });
-	app.addObject(plane);
+	app.addObject(Plane::create(rl::Model{ PLANE_MODEL_PATH, PLANE_TEXTURE_PATH }));
 
 	app.run();
 

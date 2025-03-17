@@ -31,6 +31,6 @@ target_link_libraries(
 	${PROJECT_NAME}
 PUBLIC
 	app_lib
-	quat_lib
+	plane_lib
 )
 

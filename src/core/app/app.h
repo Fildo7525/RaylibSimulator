@@ -29,7 +29,7 @@ public:
 
 	explicit Application(const Config& config);
 
-	void addObject(const rl::Object& model);
+	void addObject(const rl::Object::Ptr model);
 
 	void run();
 
@@ -38,7 +38,7 @@ public:
 private:
 	Config m_config;
 	Camera m_camera;
-	std::vector<rl::Object> m_objects;
+	std::vector<rl::Object::Ptr> m_objects;
 };
 
 

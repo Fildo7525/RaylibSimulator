@@ -1,3 +1,18 @@
 #pragma once
 
-#include "Object.h"
+#include "object.h"
+
+class Plane
+	: public rl::Object
+{
+public:
+	static rl::Object::Ptr create(const rl::Model& model)
+	{
+		return std::make_shared<Plane>(model);
+	}
+
+	Plane(const rl::Model& model);
+	~Plane();
+
+	void update() override;
+};

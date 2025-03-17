@@ -34,7 +34,7 @@ Application::Application(const Config& config)
 	m_config.onInit(*this);
 }
 
-void rl::Application::addObject(const rl::Object &model)
+void rl::Application::addObject(rl::Object::Ptr model)
 {
 	m_objects.push_back(model);
 }
@@ -48,8 +48,8 @@ void Application::run()
 	SetWindowSize(m_config.screenWidth, m_config.screenHeight);
 	auto [x, y] = m_config.windowPosition;
 
-	for (auto &object : m_objects) {
-		object.loadModel();
+	for (auto object : m_objects) {
+		object->loadModel();
 	}
 
 	while (!WindowShouldClose())
@@ -59,8 +59,8 @@ void Application::run()
 
 			BeginMode3D(m_camera);
 
-			for (const auto& object : m_objects) {
-				object.draw();
+			for (const auto &object : m_objects) {
+				object->draw();
 			}
 
 			EndMode3D();
