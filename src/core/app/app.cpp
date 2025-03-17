@@ -64,6 +64,7 @@ void Application::run()
 			BeginMode3D(m_camera);
 
 			for (const auto &object : m_objects) {
+				object->update();
 				object->draw();
 			}
 
