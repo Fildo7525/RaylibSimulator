@@ -64,7 +64,8 @@ void Application::run()
 			BeginMode3D(m_camera);
 
 			for (const auto &object : m_objects) {
-				object->update();
+				float fps = GetFPS();
+				object->update(1.0 / fps);
 				object->draw();
 			}
 

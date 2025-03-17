@@ -14,7 +14,7 @@ public:
 	Plane(const rl::Model& model);
 	~Plane();
 
-	void update() override;
+	void update(double dt) override;
 
 private:
 	float m_pitch;

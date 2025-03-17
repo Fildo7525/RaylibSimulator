@@ -13,7 +13,7 @@ Plane::~Plane()
 {
 }
 
-void Plane::update()
+void Plane::update(double dt)
 {
 	if (IsKeyDown(KEY_DOWN)) m_pitch += 0.6f;
 	else if (IsKeyDown(KEY_UP)) m_pitch -= 0.6f;
