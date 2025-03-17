@@ -6,7 +6,7 @@
 #include <print>
 
 class Matrix;
-namespace rlc
+namespace rl
 {
 
 class Quaternion
@@ -62,15 +62,15 @@ Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs);
 } // namespace RLC
 
 template <>
-struct std::formatter<rlc::Quaternion> {
+struct std::formatter<rl::Quaternion> {
 	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
 
 	template <typename FormatContext>
-	auto format(const rlc::Quaternion& p, FormatContext& ctx) const {
+	auto format(const rl::Quaternion& p, FormatContext& ctx) const {
 		auto data = p.data();
 		return std::format_to(ctx.out(), "Quaternion({}, {}, {}, {})", data[0], data[1], data[2], data[3]);
 	}
 };
 
 
-std::ostream &operator<<(std::ostream &os, const rlc::Quaternion &q);
+std::ostream &operator<<(std::ostream &os, const rl::Quaternion &q);
