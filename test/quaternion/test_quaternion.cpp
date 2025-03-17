@@ -1,5 +1,5 @@
 #include "quaternion.h"
-#include "../../src/quaternion/quaternion.h"
+#include "test_quaternion.h"
 
 void test_quaternion()
 {

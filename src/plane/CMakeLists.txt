@@ -1,25 +1,24 @@
 set(SRC
-	test_quaternion.cpp
+	plane.cpp
 )
 
 set(HEADERS
-	test_quaternion.h
+	plane.h
 )
 
-add_library(test_quat_lib
-SHARED
+add_library(plane_lib
 	${SRC}
 	${HEADERS}
 )
 
 target_include_directories(
-	test_quat_lib
+	plane_lib
 PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(
-	test_quat_lib
+	plane_lib
 PUBLIC
-	quat_lib
+	object_lib
 )
