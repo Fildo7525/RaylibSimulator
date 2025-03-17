@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
+add_definitions(-DPLANE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/plane.obj")
+add_definitions(-DPLANE_TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/texture/plane_diffuse.png")
+
 find_package(raylib 3.0 REQUIRED)
 
 set(SOURCES

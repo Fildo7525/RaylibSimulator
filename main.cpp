@@ -14,7 +14,7 @@ int main(void)
 
 	rl::Application app(config);
 
-	rl::Object plane(rl::Model{ "../assets/models/plane.obj", "../assets/textures/plane.png" });
+	rl::Object plane(rl::Model{ PLANE_MODEL_PATH, PLANE_TEXTURE_PATH });
 	app.addObject(plane);
 
 	app.run();
