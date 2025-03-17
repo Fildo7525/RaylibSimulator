@@ -21,4 +21,5 @@ target_link_libraries(
 	app_lib
 PUBLIC
 	object_lib
+	tbb
 )

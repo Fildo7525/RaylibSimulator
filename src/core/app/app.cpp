@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <algorithm>
+#include <execution>
 #include <raymath.h>
 #include <print>
 
@@ -63,11 +65,11 @@ void Application::run()
 
 			BeginMode3D(m_camera);
 
-			for (const auto &object : m_objects) {
+			std::for_each(std::execution::par_unseq, m_objects.begin(), m_objects.end(), [this](auto object) {
 				float fps = GetFPS();
 				object->update(1.0 / fps);
 				object->draw();
-			}
+			});
 
 			EndMode3D();
 
