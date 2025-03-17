@@ -15,6 +15,11 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 		std::print("Model path exists: {}\n", modelPath.string()) :
 		std::print("Model path does not exist: {}\n", modelPath.string());
 
+	std::filesystem::path texturePath = model.texturePath;
+	std::filesystem::exists(texturePath) ?
+		std::print("Texture path exists: {}\n", texturePath.string()) :
+		std::print("Texture path does not exist: {}\n", texturePath.string());
+
 	auto hasher = std::hash<std::string>();
 	size_t hash = hasher(model.modelPath) ^ hasher(model.texturePath);
 
