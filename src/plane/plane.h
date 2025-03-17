@@ -15,4 +15,9 @@ public:
 	~Plane();
 
 	void update() override;
+
+private:
+	float m_pitch;
+	float m_yaw;
+	float m_roll;
 };
