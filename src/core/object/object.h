@@ -27,7 +27,7 @@ public:
 	rl::Model rlModel() const;
 	std::shared_ptr<::Model> model() const;
 
-private:
+protected:
 	rl::Model m_rlModel;
 	std::shared_ptr<::Model> m_model;
 };
