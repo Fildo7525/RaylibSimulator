@@ -22,4 +22,5 @@ target_link_libraries(
 PUBLIC
 	object_lib
 	quat_lib
+	tbb
 )

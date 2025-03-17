@@ -1,46 +1,115 @@
 #include "plane.h"
 #include "quaternion.h"
 
+#include <algorithm>
+#include <execution>
+#include <iostream>
+#include <raymath.h>
+#include <iostream>
+
 Plane::Plane(const rl::Model& model)
 	: rl::Object(model)
-	, m_pitch(0.0f)
-	, m_yaw(0.0f)
-	, m_roll(0.0f)
+	, m_quat(rl::Quaternion::fromEuler(0, 0, 0))
+	, m_mass(2.0f)
+	, m_invMrb(Matrix6f::Zero())
+	, m_inertiaMatrix(Matrix3f::Zero())
+	, m_feedbackTau(Vector6f::Zero())
 {
+	m_inertiaMatrix.diagonal() << m_mass*2/6, m_mass*2/6, m_mass*2/6;
+
+	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * m_mass;
+	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
 }
 
 Plane::~Plane()
 {
 }
 
-void Plane::update(double dt)
+Vector6f Plane::getTorque()
 {
-	if (IsKeyDown(KEY_DOWN)) m_pitch += 0.6f;
-	else if (IsKeyDown(KEY_UP)) m_pitch -= 0.6f;
-	else
-	{
-		if (m_pitch > 0.3f) m_pitch -= 0.3f;
-		else if (m_pitch < -0.3f) m_pitch += 0.3f;
+	float dTau = 50;
+	static Vector6f tau{ 0, 0, 0, 0, 0, 0 };
+
+	if (IsKeyDown(KEY_LEFT)) tau[0] += dTau;
+	else if (IsKeyDown(KEY_RIGHT)) tau[0] -= dTau;
+
+	if (IsKeyDown(KEY_UP)) tau[2] += dTau;
+	else if (IsKeyDown(KEY_DOWN)) tau[2] -= dTau;
+
+	if (IsKeyDown(KEY_W)) tau[3] += dTau;
+	else if (IsKeyDown(KEY_S)) tau[3] -= dTau;
+
+	if (IsKeyDown(KEY_Q)) tau[4] += dTau;
+	else if (IsKeyDown(KEY_E)) tau[4] -= dTau;
+
+	if (IsKeyDown(KEY_A)) tau[5] -= dTau;
+	else if (IsKeyDown(KEY_D)) tau[5] += dTau;
+
+
+	tau *= 0.96;
+	for (auto& t : tau) {
+		if (std::abs(t) < 0.01f) t = 0;
+		t = std::clamp(t, -1000.0f, 1000.0f);
 	}
 
-	// Plane m_yaw (y-axis) controls
-	if (IsKeyDown(KEY_S)) m_yaw -= 1.0f;
-	else if (IsKeyDown(KEY_A)) m_yaw += 1.0f;
-	else
-	{
-		if (m_yaw > 0.0f) m_yaw -= 0.5f;
-		else if (m_yaw < 0.0f) m_yaw += 0.5f;
+	return tau;
+}
+
+Vector6f Plane::rigidBodyDynamics(Vector6f &tau, float dt)
+{
+	tau -= m_feedbackTau;
+
+	Vector6f nu_dot = m_invMrb * tau;
+	Vector6f nu = nu_dot * dt;
+
+	Vector3f v = nu.head<3>();
+	Vector3f omega = nu.tail<3>();
+
+	auto tmp = m_inertiaMatrix * omega;
+
+	auto pt1 = omega.cross(m_mass * v);
+	auto pt2 = tmp.cross(omega) * -1;
+	m_feedbackTau = (Vector6f() << pt1, pt2).finished();
+
+	for (auto& t : m_feedbackTau) {
+		t = std::clamp(t, -1000.0f, 1000.0f);
+		t = std::abs(t) < 0.1f ? 0 : t;
 	}
 
-	// Plane m_roll (z-axis) controls
-	if (IsKeyDown(KEY_LEFT)) m_roll -= 1.0f;
-	else if (IsKeyDown(KEY_RIGHT)) m_roll += 1.0f;
-	else
-	{
-		if (m_roll > 0.0f) m_roll -= 0.5f;
-		else if (m_roll < 0.0f) m_roll += 0.5f;
-	}
+	return nu;
+}
+
+std::pair<Eigen::Vector3f, rl::Quaternion> Plane::kinematics(const Vector6f &nu, float dt)
+{
+	constexpr int L = 100;
+	Eigen::Vector3f p;
+	rl::Quaternion nu1(nu[0], nu[1], nu[2], 0);
+	rl::Quaternion nu2(nu[3], nu[4], nu[5], 0);
+	rl::Quaternion q = m_quat;
+
+	// Position
+	rl::Quaternion p_dot = q * (nu1 * q.cconjugate());
+	p = { p_dot.x() * dt, p_dot.y() * dt, p_dot.z() * dt };
+
+	// Rotation
+	rl::Quaternion q_dot = 0.5 * (m_quat * nu2);
+	m_quat = m_quat + q_dot * dt;
+
+	/* std::println("transpose: {}, {}, {}, {}", transpose[0], transpose[1], transpose[2], transpose[3]); */
+	m_quat += L * (1 - m_quat.ctranspose().dot(m_quat)) * m_quat;
+	m_quat.normalize();
+
+	return { p, m_quat };
+}
+
+void Plane::update(float dt)
+{
+	auto tau = getTorque();
+	/* std::cout << "Torque: " << tau << std::endl; */
+	auto nu = rigidBodyDynamics(tau, dt);
+	auto [p, q] = kinematics(nu, dt);
 
 	// Tranformation matrix for rotations
-	m_model->transform = MatrixRotateXYZ((Vector3){ DEG2RAD*m_pitch, DEG2RAD*m_yaw, DEG2RAD*m_roll });
+	transform(q);
+	move(p);
 }
