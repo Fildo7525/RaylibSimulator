@@ -34,6 +34,19 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 	return m_images[hash];
 }
 
+void rl::ImageLoader::forceUnload(const rl::Model &model)
+{
+	auto hasher = std::hash<std::string>();
+	size_t hash = hasher(model.modelPath) ^ hasher(model.texturePath);
+
+	auto it = m_images.find(hash);
+	if (it != m_images.end()) {
+		UnloadTexture(it->second->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture);
+		UnloadModel(*it->second);
+		m_images.erase(it);
+	}
+}
+
 rl::ImageLoader::~ImageLoader()
 {
 	for (auto& [hash, model] : m_images) {

@@ -30,6 +30,7 @@ public:
 	static ImageLoader &instance();
 
 	std::shared_ptr<::Model> loadModel(const rl::Model &model);
+	void forceUnload(const rl::Model &model);
 
 	~ImageLoader();
 
