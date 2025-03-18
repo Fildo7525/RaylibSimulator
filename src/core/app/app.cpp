@@ -67,8 +67,9 @@ void Application::run()
 
 			DrawGrid(10, 10.0f);
 
-			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this](Object::Ptr object) {
-				float fps = GetFPS();
+			double fps = GetFPS();
+			fps = (fps == 0) ? 1 : fps;
+			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this, &fps](Object::Ptr object) {
 				object->update(1.0 / fps);
 				object->draw();
 			});
