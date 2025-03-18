@@ -22,7 +22,7 @@ public:
 	void loadModel();
 
 	void draw() const;
-	virtual void update(double dt) = 0;
+	virtual void update(float dt) = 0;
 
 	rl::Model rlModel() const;
 	std::shared_ptr<::Model> model() const;
