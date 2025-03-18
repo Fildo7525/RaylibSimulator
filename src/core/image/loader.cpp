@@ -34,15 +34,6 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 	return m_images[hash];
 }
 
-bool operator==(const ::Model& lhs, const ::Model& rhs)
-{
-	return lhs.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id == rhs.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture.id &&
-		lhs.boneCount == rhs.boneCount &&
-		lhs.meshCount == rhs.meshCount &&
-		lhs.materialCount == rhs.materialCount;
-
-}
-
 rl::ImageLoader::~ImageLoader()
 {
 	for (auto& [hash, model] : m_images) {

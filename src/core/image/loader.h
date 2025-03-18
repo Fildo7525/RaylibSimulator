@@ -10,19 +10,11 @@ namespace rl
 
 struct Model
 {
-	Model(const std::string &modelPath, const std::string &texturePath, const Vector3 &position, float scale)
+	Model(const std::string &modelPath, const std::string &texturePath, const Vector3 &position = Vector3{ 0.0f, 0.0f, 0.0f }, float scale = 1.0f)
 		: modelPath(modelPath)
 		, texturePath(texturePath)
 		, position(position)
 		, scale(scale)
-	{
-	}
-
-	Model(const std::string &modelPath, const std::string &texturePath)
-		: modelPath(modelPath)
-		, texturePath(texturePath)
-		, position(Vector3{ 0.0f, 0.0f, 0.0f })
-		, scale(1.0f)
 	{
 	}
 
@@ -46,5 +38,3 @@ private:
 };
 
 }
-
-bool operator==(const ::Model& lhs, const ::Model& rhs);
