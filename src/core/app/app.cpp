@@ -50,6 +50,8 @@ void Application::run()
 	SetWindowMonitor(m_config.monitor);
 	InitWindow(m_config.screenWidth, m_config.screenHeight, m_config.windowTitle.c_str());
 
+	SetWindowState(FLAG_WINDOW_RESIZABLE);
+	SetWindowState(FLAG_VSYNC_HINT);
 	SetWindowOpacity(m_config.opacity);
 	SetWindowSize(m_config.screenWidth, m_config.screenHeight);
 	auto [x, y] = m_config.windowPosition;
