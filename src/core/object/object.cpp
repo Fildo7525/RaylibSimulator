@@ -23,7 +23,6 @@ void rl::Object::loadModel()
 void rl::Object::draw() const
 {
 	DrawModel(*m_model, m_rlModel.position, m_rlModel.scale, WHITE);   // Draw 3d model with texture
-	DrawGrid(10, 10.0f);
 }
 
 rl::Model rl::Object::rlModel() const

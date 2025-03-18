@@ -65,7 +65,9 @@ void Application::run()
 
 			BeginMode3D(m_camera);
 
-			std::for_each(std::execution::par_unseq, m_objects.begin(), m_objects.end(), [this](auto object) {
+			DrawGrid(10, 10.0f);
+
+			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this](Object::Ptr object) {
 				float fps = GetFPS();
 				object->update(1.0 / fps);
 				object->draw();
