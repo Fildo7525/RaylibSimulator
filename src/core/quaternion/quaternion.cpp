@@ -18,11 +18,12 @@ rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 	return q;
 }
 
-Vector3f rl::Quaternion::toEuler() const
+Vector3f rl::Quaternion::toEuler(bool degrees) const
 {
 	::Quaternion quat{m_data.x(), m_data.y(), m_data.z(), m_data.w()};
 	Vector3 angles = QuaternionToEuler(quat);
 	Vector3f euler = { angles.y, angles.z, angles.x };
+	euler *= (degrees ? 180.0f / PI : 1.0f);
 	return euler;
 }
 

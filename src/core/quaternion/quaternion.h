@@ -37,7 +37,7 @@ public:
 
 	static rl::Quaternion fromEuler(float x, float y, float z);
 
-	Vector3f toEuler() const;
+	Vector3f toEuler(bool degrees = false) const;
 
 	static rl::Quaternion fromEigRotMatrix(Matrix4f matrix);
 	static rl::Quaternion fromRlRotMatrix(::Matrix matrix);
