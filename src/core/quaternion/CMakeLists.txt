@@ -21,4 +21,5 @@ target_link_libraries(
 	quat_lib
 PUBLIC
 	raylib
+	Eigen3::Eigen
 )

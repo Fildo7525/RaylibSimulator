@@ -1,7 +1,15 @@
 #include "quaternion.h"
+#include <raymath.h>
 
-#include <algorithm>
-#include <raylib.h>
+Vector4f rl::Quaternion::toEigVector() const
+{
+	return Vector4f(m_data.x(), m_data.y(), m_data.z(), m_data.w());
+}
+
+::Quaternion rl::Quaternion::toRlQuaternion() const
+{
+	return ::Quaternion{ m_data.x(), m_data.y(), m_data.z(), m_data.w() };
+}
 
 rl::Quaternion::Quaternion(float x, float y, float z, float w)
 	: m_data{ x, y, z, w }
@@ -10,192 +18,195 @@ rl::Quaternion::Quaternion(float x, float y, float z, float w)
 
 rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 {
-	float c1 = cos(x / 2);
-	float c2 = cos(y / 2);
-	float c3 = cos(z / 2);
-	float s1 = sin(x / 2);
-	float s2 = sin(y / 2);
-	float s3 = sin(z / 2);
-
-	return rl::Quaternion(
-		s1 * c2 * c3 + c1 * s2 * s3,
-		c1 * s2 * c3 - s1 * c2 * s3,
-		c1 * c2 * s3 + s1 * s2 * c3,
-		c1 * c2 * c3 - s1 * s2 * s3
-	);
+	auto data = QuaternionFromEuler(y, z, x);
+	Quaternion q(data.x, data.y, data.z, data.w);
+	return q;
 }
 
-std::array<float, 3> rl::Quaternion::toEuler() const
+Vector3f rl::Quaternion::toEuler() const
 {
-	std::array<float, 3> euler;
-	euler[0] = atan2(2 * (m_data[0] * m_data[1] + m_data[2] * m_data[3]), 1 - 2 * (m_data[1] * m_data[1] + m_data[2] * m_data[2]));
-	euler[1] = asin(2 * (m_data[0] * m_data[2] - m_data[3] * m_data[1]));
-	euler[2] = atan2(2 * (m_data[0] * m_data[3] + m_data[1] * m_data[2]), 1 - 2 * (m_data[2] * m_data[2] + m_data[3] * m_data[3]));
+	::Quaternion quat{m_data.x(), m_data.y(), m_data.z(), m_data.w()};
+	Vector3 angles = QuaternionToEuler(quat);
+	Vector3f euler = { angles.y, angles.z, angles.x };
 	return euler;
 }
 
-rl::Quaternion rl::Quaternion::fromRotMatrix(::Matrix matrix)
+rl::Quaternion rl::Quaternion::fromEigRotMatrix(Matrix4f matrix)
 {
-	float trace = matrix.m0 + matrix.m5 + matrix.m10;
-	if (trace > 0) {
-		float s = 0.5 / sqrt(trace + 1.0);
-		return rl::Quaternion(
-			(matrix.m6 - matrix.m9) * s,
-			(matrix.m8 - matrix.m2) * s,
-			(matrix.m1 - matrix.m4) * s,
-			0.25 / s
-		);
-	}
-	else if (matrix.m0 > matrix.m5 && matrix.m0 > matrix.m10) {
-		float s = 2.0 * sqrt(1.0 + matrix.m0 - matrix.m5 - matrix.m10);
-		return rl::Quaternion(
-			0.25 * s,
-			(matrix.m4 + matrix.m1) / s,
-			(matrix.m8 + matrix.m2) / s,
-			(matrix.m6 - matrix.m9) / s
-		);
-	}
-	else if (matrix.m5 > matrix.m10) {
-		float s = 2.0 * sqrt(1.0 + matrix.m5 - matrix.m0 - matrix.m10);
-		return rl::Quaternion(
-			(matrix.m4 + matrix.m1) / s,
-			0.25 * s,
-			(matrix.m9 + matrix.m6) / s,
-			(matrix.m8 - matrix.m2) / s
-		);
-	}
-	else {
-		float s = 2.0 * sqrt(1.0 + matrix.m10 - matrix.m0 - matrix.m5);
-		return rl::Quaternion(
-			(matrix.m8 + matrix.m2) / s,
-			(matrix.m9 + matrix.m6) / s,
-			0.25 * s,
-			(matrix.m1 - matrix.m4) / s
-		);
-	}
+	::Matrix mat = { matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
+					 matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
+					 matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
+					 matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3) };
+
+	auto data = QuaternionFromMatrix(mat);
+	return Quaternion(data.x, data.y, data.z, data.w);;
 }
 
-::Matrix rl::Quaternion::toRotMatrix() const
+rl::Quaternion rl::Quaternion::fromRlRotMatrix(::Matrix matrix)
 {
-	::Matrix matrix = { 0 };
-	matrix.m0 = 1 - 2 * m_data[1] * m_data[1] - 2 * m_data[2] * m_data[2];
-	matrix.m1 = 2 * m_data[0] * m_data[1] + 2 * m_data[2] * m_data[3];
-	matrix.m2 = 2 * m_data[0] * m_data[2] - 2 * m_data[1] * m_data[3];
-	matrix.m4 = 2 * m_data[0] * m_data[1] - 2 * m_data[2] * m_data[3];
-	matrix.m5 = 1 - 2 * m_data[0] * m_data[0] - 2 * m_data[2] * m_data[2];
-	matrix.m6 = 2 * m_data[1] * m_data[2] + 2 * m_data[0] * m_data[3];
-	matrix.m8 = 2 * m_data[0] * m_data[2] + 2 * m_data[1] * m_data[3];
-	matrix.m9 = 2 * m_data[1] * m_data[2] - 2 * m_data[0] * m_data[3];
-	matrix.m10 = 1 - 2 * m_data[0] * m_data[0] - 2 * m_data[1] * m_data[1];
+	auto data = QuaternionFromMatrix(matrix);
+	return Quaternion(data.x, data.y, data.z, data.w);
+}
+
+Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
+{
+	return Vector4f(quat.x, quat.y, quat.z, quat.w);
+}
+
+::Matrix rl::Quaternion::toRlRotMatrix() const
+{
+	::Quaternion quat{ m_data.x(), m_data.y(), m_data.z(), m_data.w() };
+	return QuaternionToMatrix(quat);
+}
+
+Matrix4f rl::Quaternion::toEigRotMatrix() const
+{
+	::Quaternion quat{ .x = m_data[0], .y = m_data[1], .z = m_data[2], .w = m_data[3] };
+	::Matrix mat =  QuaternionToMatrix(quat);
+	Matrix4f matrix{{mat.m0, mat.m4, mat.m8, mat.m12},
+					{mat.m1, mat.m5, mat.m9, mat.m13},
+					{mat.m2, mat.m6, mat.m10, mat.m14},
+					{mat.m3, mat.m7, mat.m11, mat.m15}};
 	return matrix;
 }
 
-std::array<float, 4> rl::Quaternion::data() const
+Vector4f rl::Quaternion::data() const
 {
 	return m_data;
 }
 
-double rl::Quaternion::magnitude() const
+float rl::Quaternion::magnitude() const
 {
 	return sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2] + m_data[3] * m_data[3]);
 }
 
-rl::Quaternion rl::Quaternion::inverse() const
-{
-	double gain = 1.0 / (m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2] + m_data[3] * m_data[3]);
-	return  gain * this->conjugate();
-}
-
-rl::Quaternion rl::Quaternion::conjugate() const
+rl::Quaternion rl::Quaternion::cconjugate() const
 {
 	return Quaternion(-m_data[0], -m_data[1], -m_data[2], m_data[3]);
 }
 
-rl::Quaternion rl::Quaternion::normalize() const
+rl::Quaternion rl::Quaternion::cnormalize() const
 {
-	double gain = 1.0 / magnitude();
-	return gain * *this;
+	auto q_data = m_data;
+
+	/* quat = quat + L*(1-self.quaternion.T @ self.quaternion) * self.quaternion */
+	float mag = magnitude();
+	mag = (mag == 0) ? 1 : mag;
+	float gain = 1.0 / mag;
+
+	q_data *= gain;
+
+	return Quaternion(q_data[0], q_data[1], q_data[2], q_data[3]);
 }
 
-rl::Quaternion rl::Quaternion::rotate(const Quaternion& q) const
+rl::Quaternion rl::Quaternion::crotate(const Quaternion& q) const
 {
-	return *this * q * this->conjugate();
+	auto conj = *this;
+	conj = conj.conjugate();
+	conj.m_data = toEigVector(QuaternionMultiply(toRlQuaternion(), conj.toRlQuaternion()));
+	conj.m_data = toEigVector(QuaternionMultiply(q.toRlQuaternion(), conj.toRlQuaternion()));
+
+	return conj;
 }
 
-rl::Quaternion &rl::Quaternion::inverse()
+rl::Quaternion rl::Quaternion::ctranspose() const
 {
-	double gain = 1.0 / (m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2] + m_data[3] * m_data[3]);
-	*this = gain * this->conjugate();
-	return *this;
+	Quaternion conj = *this;
+	conj.m_data.transpose();
+
+	return conj;
+}
+
+float rl::Quaternion::dot(const rl::Quaternion &q) const
+{
+	return m_data.dot(q.m_data);;
 }
 
 rl::Quaternion &rl::Quaternion::conjugate()
 {
-	m_data = { -m_data[0], -m_data[1], -m_data[2], m_data[3] };
+	m_data = { -m_data.x(), -m_data.y(), -m_data.z(), m_data.w() };
 	return *this;
 }
 
 rl::Quaternion &rl::Quaternion::normalize()
 {
-	double gain = 1.0 / magnitude();
+	double mag = magnitude();
+	mag = (mag == 0) ? 1 : mag;
+
+	double gain = 1.0 / mag;
 	*this = gain * *this;
+
 	return *this;
 }
 
 rl::Quaternion &rl::Quaternion::rotate(const Quaternion& q)
 {
-	*this *= q * this->conjugate();
+	auto conj = *this;
+	conj *= q.cconjugate();
+
+	conj.m_data = toEigVector(QuaternionMultiply(q.toRlQuaternion(), conj.toRlQuaternion()));
+	m_data = toEigVector(QuaternionMultiply(toRlQuaternion(), conj.toRlQuaternion()));
+
 	return *this;
 }
 
 rl::Quaternion rl::operator+(const rl::Quaternion& lhs, const rl::Quaternion& rhs)
 {
-	return Quaternion(lhs.m_data[0] + rhs.m_data[0], lhs.m_data[1] + rhs.m_data[1], lhs.m_data[2] + rhs.m_data[2], lhs.m_data[3] + rhs.m_data[3]);
+	Quaternion q(0, 0, 0, 1);
+	q.m_data = lhs.m_data + rhs.m_data;
+
+	return q;
 }
 
 rl::Quaternion rl::operator-(const rl::Quaternion& lhs, const rl::Quaternion& rhs)
 {
-	return Quaternion(lhs.m_data[0] - rhs.m_data[0], lhs.m_data[1] - rhs.m_data[1], lhs.m_data[2] - rhs.m_data[2], lhs.m_data[3] - rhs.m_data[3]);
+	Quaternion q(0, 0, 0, 1);
+	q.m_data = lhs.m_data - rhs.m_data;
+
+	return q;
 }
 
 rl::Quaternion rl::operator*(const rl::Quaternion& lhs, const rl::Quaternion& rhs)
 {
-	return rl::Quaternion(
-		lhs.m_data[3] * rhs.m_data[0] + lhs.m_data[0] * rhs.m_data[3] + lhs.m_data[1] * rhs.m_data[2] - lhs.m_data[2] * rhs.m_data[1],
-		lhs.m_data[3] * rhs.m_data[1] - lhs.m_data[0] * rhs.m_data[2] + lhs.m_data[1] * rhs.m_data[3] + lhs.m_data[2] * rhs.m_data[0],
-		lhs.m_data[3] * rhs.m_data[2] + lhs.m_data[0] * rhs.m_data[1] - lhs.m_data[1] * rhs.m_data[0] + lhs.m_data[2] * rhs.m_data[3],
-		lhs.m_data[3] * rhs.m_data[3] - lhs.m_data[0] * rhs.m_data[0] - lhs.m_data[1] * rhs.m_data[1] - lhs.m_data[2] * rhs.m_data[2]
-	);
+	auto data = QuaternionMultiply(lhs.toRlQuaternion(), rhs.toRlQuaternion());
+	return rl::Quaternion(data.x, data.y, data.z, data.w);
 }
 
 rl::Quaternion rl::operator*(const rl::Quaternion& lhs, double rhs)
 {
-	return Quaternion(lhs.m_data[0] * rhs, lhs.m_data[1] * rhs, lhs.m_data[2] * rhs, lhs.m_data[3] * rhs);
+	rl::Quaternion q(0, 0, 0, 1);
+	q.m_data = lhs.m_data * rhs;
+
+	return q;
 }
 
 rl::Quaternion rl::operator*(double lhs, const rl::Quaternion& rhs)
 {
-	return Quaternion(rhs.m_data[0] * lhs, rhs.m_data[1] * lhs, rhs.m_data[2] * lhs, rhs.m_data[3] * lhs);
+	Quaternion q(0, 0, 0, 1);
+	q.m_data = rhs.m_data * lhs;
+
+	return q;
 }
 
 rl::Quaternion rl::operator/(const rl::Quaternion& lhs, const rl::Quaternion& rhs)
 {
-	return lhs * rhs.inverse();
+	return lhs * rhs.cconjugate();
+}
+
+float rl::operator&(const rl::Quaternion &lhs, const rl::Quaternion &rhs)
+{
+	return lhs.magnitude() * rhs.magnitude();
 }
 
 rl::Quaternion& rl::Quaternion::operator+=(const Quaternion &rhs)
 {
-	for (int i = 0; i < m_data.size(); i++)
-		m_data[i] += rhs.m_data[i];
-
+	m_data += rhs.m_data;
 	return *this;
 }
 
 rl::Quaternion& rl::Quaternion::operator-=(const Quaternion &rhs)
 {
-	for (int i = 0; i < m_data.size(); i++)
-		m_data[i] += rhs.m_data[i];
-
+	m_data -= rhs.m_data;
 	return *this;
 }
 
@@ -205,11 +216,9 @@ rl::Quaternion& rl::Quaternion::operator*=(const Quaternion &rhs)
 	return *this;
 }
 
-rl::Quaternion& rl::Quaternion::operator*=(double rhs)
+rl::Quaternion& rl::Quaternion::operator*=(float rhs)
 {
-	for (int i = 0; i < m_data.size(); i++)
-		m_data[i] *= rhs;
-
+	m_data *= rhs;
 	return *this;
 }
 

@@ -1,56 +1,75 @@
 #pragma once
 
-#include <array>
-#include <cmath>
-#include <format>
 #include <print>
 
-class Matrix;
+#include <raylib.h>
+#include <raymath.h>
+#include <Eigen/Dense>
+
+using Vector6f = Eigen::Matrix<float, 6, 1>;
+using Eigen::Vector3f;
+using Eigen::Matrix4f;
+using Eigen::Vector4f;
+
 namespace rl
 {
 
 class Quaternion
 {
-public:
-	Quaternion(float x, float y, float z, float w);
-
-	static Quaternion fromEuler(float x, float y, float z);
-
-	std::array<float, 3> toEuler() const;
-
-	static Quaternion fromRotMatrix(::Matrix matrix);
-
-	::Matrix toRotMatrix() const;
-
-	std::array<float, 4> data() const;
-
-	double magnitude() const;
-
-	Quaternion inverse() const;
-	Quaternion conjugate() const;
-	Quaternion normalize() const;
-	Quaternion rotate(const Quaternion &q) const;
-
-	Quaternion &inverse();
-	Quaternion &conjugate();
-	Quaternion &normalize();
-	Quaternion &rotate(const Quaternion &q);
-
 	friend Quaternion operator+(const Quaternion &lhs, const Quaternion &rhs);
 	friend Quaternion operator-(const Quaternion &lhs, const Quaternion &rhs);
 	friend Quaternion operator*(const Quaternion &lhs, const Quaternion &rhs);
 	friend Quaternion operator*(const Quaternion &lhs, double rhs);
 	friend Quaternion operator*(double lhs, const Quaternion &rhs);
 	friend Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs);
+	friend float operator&(const Quaternion &lhs, const Quaternion &rhs);
+
+private:
+	Eigen::Vector4f toEigVector() const;
+	Eigen::Vector4f toEigVector(const ::Quaternion &quat) const;
+
+public:
+	Quaternion(float x, float y, float z, float w);
+
+	float x() const { return m_data.x(); }
+	float y() const { return m_data.y(); }
+	float z() const { return m_data.z(); }
+	float w() const { return m_data.w(); }
+
+	static rl::Quaternion fromEuler(float x, float y, float z);
+
+	Vector3f toEuler() const;
+
+	static rl::Quaternion fromEigRotMatrix(Matrix4f matrix);
+	static rl::Quaternion fromRlRotMatrix(::Matrix matrix);
+
+	::Quaternion toRlQuaternion() const;
+	::Matrix toRlRotMatrix() const;
+	Matrix4f toEigRotMatrix() const;
+
+	Vector4f data() const;
+
+	float magnitude() const;
+
+	Quaternion cconjugate() const;
+	Quaternion cnormalize() const;
+	Quaternion crotate(const Quaternion &q) const;
+	Quaternion ctranspose() const;
+	float dot(const Quaternion &q) const;
+
+	Quaternion &conjugate();
+	Quaternion &normalize();
+	Quaternion &rotate(const Quaternion &q);
 
 	Quaternion &operator+=(const Quaternion &rhs);
 	Quaternion &operator-=(const Quaternion &rhs);
 	Quaternion &operator*=(const Quaternion &rhs);
-	Quaternion &operator*=(double rhs);
+	Quaternion &operator*=(float rhs);
 	Quaternion &operator/=(const Quaternion &rhs);
 
 private:
-	std::array<float, 4> m_data;
+
+	Vector4f m_data;
 };
 
 Quaternion operator+(const Quaternion &lhs, const Quaternion &rhs);
@@ -59,6 +78,7 @@ Quaternion operator*(const Quaternion &lhs, const Quaternion &rhs);
 Quaternion operator*(const Quaternion &lhs, double rhs);
 Quaternion operator*(double lhs, const Quaternion& rhs);
 Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs);
+float operator&(const Quaternion &lhs, const Quaternion &rhs);
 } // namespace RLC
 
 template <>

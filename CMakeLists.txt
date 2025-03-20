@@ -12,6 +12,7 @@ add_definitions(-DPLANE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/
 add_definitions(-DPLANE_TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/texture/plane_diffuse.png")
 
 find_package(raylib 3.0 REQUIRED)
+find_package(Eigen3 3.4 REQUIRED)
 
 set(SOURCES
 	main.cpp
