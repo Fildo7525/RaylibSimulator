@@ -1,14 +1,9 @@
 #include "quaternion.h"
 #include <raymath.h>
 
-Vector4f rl::Quaternion::toEigVector() const
+Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
 {
-	return Vector4f(m_data.x(), m_data.y(), m_data.z(), m_data.w());
-}
-
-::Quaternion rl::Quaternion::toRlQuaternion() const
-{
-	return ::Quaternion{ m_data.x(), m_data.y(), m_data.z(), m_data.w() };
+	return Vector4f(quat.x, quat.y, quat.z, quat.w);
 }
 
 rl::Quaternion::Quaternion(float x, float y, float z, float w)
@@ -48,9 +43,9 @@ rl::Quaternion rl::Quaternion::fromRlRotMatrix(::Matrix matrix)
 	return Quaternion(data.x, data.y, data.z, data.w);
 }
 
-Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
+::Quaternion rl::Quaternion::toRlQuaternion() const
 {
-	return Vector4f(quat.x, quat.y, quat.z, quat.w);
+	return ::Quaternion{ m_data.x(), m_data.y(), m_data.z(), m_data.w() };
 }
 
 ::Matrix rl::Quaternion::toRlRotMatrix() const
@@ -68,6 +63,11 @@ Matrix4f rl::Quaternion::toEigRotMatrix() const
 					{mat.m2, mat.m6, mat.m10, mat.m14},
 					{mat.m3, mat.m7, mat.m11, mat.m15}};
 	return matrix;
+}
+
+Vector4f rl::Quaternion::toEigVector() const
+{
+	return Vector4f(m_data.x(), m_data.y(), m_data.z(), m_data.w());
 }
 
 Vector4f rl::Quaternion::data() const

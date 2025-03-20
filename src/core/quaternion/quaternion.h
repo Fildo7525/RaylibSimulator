@@ -25,7 +25,6 @@ class Quaternion
 	friend float operator&(const Quaternion &lhs, const Quaternion &rhs);
 
 private:
-	Eigen::Vector4f toEigVector() const;
 	Eigen::Vector4f toEigVector(const ::Quaternion &quat) const;
 
 public:
@@ -46,6 +45,7 @@ public:
 	::Quaternion toRlQuaternion() const;
 	::Matrix toRlRotMatrix() const;
 	Matrix4f toEigRotMatrix() const;
+	Eigen::Vector4f toEigVector() const;
 
 	Vector4f data() const;
 
