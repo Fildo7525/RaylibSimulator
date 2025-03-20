@@ -12,7 +12,7 @@ rl::Object::Object(const rl::Model &model)
 
 rl::Object::~Object()
 {
-
+	rl::ImageLoader::instance().forceUnload(m_rlModel);
 }
 
 void rl::Object::loadModel()
