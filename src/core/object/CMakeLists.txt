@@ -21,4 +21,5 @@ target_link_libraries(
 	object_lib
 PUBLIC
 	image_lib
+	quat_lib
 )

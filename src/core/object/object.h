@@ -1,10 +1,12 @@
 #pragma once
 
-#include "loader.h"
 #include <memory>
 #include <raylib.h>
 #include <raymath.h>
 #include <functional>
+
+#include "loader.h"
+#include "quaternion.h"
 
 namespace rl
 {
@@ -20,6 +22,11 @@ public:
 	virtual ~Object();
 
 	void loadModel();
+
+	rl::Quaternion rotation() const;
+
+	void transform(const rl::Quaternion &quat);
+	void move(const Eigen::Vector3f &position);
 
 	void draw() const;
 	virtual void update(float dt) = 0;
