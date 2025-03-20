@@ -13,8 +13,6 @@ namespace rl
 
 class Object
 {
-	friend class std::hash<rl::Object>;
-
 public:
 	using Ptr = std::shared_ptr<Object>;
 
