@@ -134,7 +134,7 @@ rl::Quaternion &rl::Quaternion::normalize()
 	mag = (mag == 0) ? 1 : mag;
 
 	double gain = 1.0 / mag;
-	*this = gain * *this;
+	this->m_data *= gain;
 
 	return *this;
 }
