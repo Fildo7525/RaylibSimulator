@@ -28,7 +28,6 @@ rl::Quaternion rl::Object::rotation() const
 void rl::Object::transform(const rl::Quaternion &quat)
 {
 	m_model->transform = quat.toRlRotMatrix();
-	QuaternionFromMatrix(m_model->transform);
 }
 
 void rl::Object::move(const Eigen::Vector3f &position)
