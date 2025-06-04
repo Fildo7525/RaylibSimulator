@@ -62,6 +62,11 @@ void Application::run()
 
 	while (!WindowShouldClose())
 	{
+		if (IsKeyDown(KEY_ESCAPE)) {
+			CloseWindow();
+			return;
+		}
+
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
