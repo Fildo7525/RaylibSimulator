@@ -14,8 +14,7 @@ rl::Quaternion::Quaternion(float x, float y, float z, float w)
 rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 {
 	auto data = QuaternionFromEuler(y, z, x);
-	Quaternion q(data.x, data.y, data.z, data.w);
-	return q;
+	return Quaternion(data.x, data.y, data.z, data.w);
 }
 
 Vector3f rl::Quaternion::toEuler(bool degrees) const
@@ -58,7 +57,7 @@ rl::Quaternion rl::Quaternion::fromRlRotMatrix(::Matrix matrix)
 Matrix4f rl::Quaternion::toEigRotMatrix() const
 {
 	::Quaternion quat{ .x = m_data[0], .y = m_data[1], .z = m_data[2], .w = m_data[3] };
-	::Matrix mat =  QuaternionToMatrix(quat);
+	::Matrix mat = QuaternionToMatrix(quat);
 	Matrix4f matrix{{mat.m0, mat.m4, mat.m8, mat.m12},
 					{mat.m1, mat.m5, mat.m9, mat.m13},
 					{mat.m2, mat.m6, mat.m10, mat.m14},
