@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
+
 #include <raylib.h>
 #include <raymath.h>
-#include <functional>
 
 #include "loader.h"
 #include "quaternion.h"
@@ -31,6 +31,10 @@ public:
 
 	rl::Model rlModel() const;
 	std::shared_ptr<::Model> model() const;
+
+	/* TODO:
+	 * 1. Add collision check of the model and another object
+	 **/
 
 protected:
 	rl::Model m_rlModel;
