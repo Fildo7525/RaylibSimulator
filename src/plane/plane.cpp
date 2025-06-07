@@ -95,16 +95,16 @@ std::pair<Eigen::Vector3f, rl::Quaternion> Plane::kinematics(const Vector6f &nu,
 {
 	constexpr int L = 100;
 	Eigen::Vector3f p;
-	rl::Quaternion nu1(nu[0], nu[1], nu[2], 0);
-	rl::Quaternion nu2(nu[3], nu[4], nu[5], 0);
+	rl::Quaternion tau_bar(nu[0], nu[1], nu[2], 0);
+	rl::Quaternion omega_bar(nu[3], nu[4], nu[5], 0);
 	rl::Quaternion q = m_quat;
 
 	// Position
-	rl::Quaternion p_dot = q * (nu1 * q.cconjugate());
-	p = { p_dot.x() * dt, p_dot.y() * dt, p_dot.z() * dt };
+	rl::Quaternion p_dot = q * (tau_bar * q.cconjugate());
+	p = p_dot.data().head<3>() * dt;
 
 	// Rotation
-	rl::Quaternion q_dot = 0.5 * (m_quat * nu2);
+	rl::Quaternion q_dot = 0.5 * (m_quat * omega_bar);
 	m_quat = m_quat + q_dot * dt;
 
 	/* std::println("transpose: {}, {}, {}, {}", transpose[0], transpose[1], transpose[2], transpose[3]); */
