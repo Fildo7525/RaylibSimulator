@@ -12,6 +12,8 @@ SHARED
 	${HEADERS}
 )
 
+add_compile_options( -fPIC )
+
 target_include_directories(
 	test_quat_lib
 PUBLIC

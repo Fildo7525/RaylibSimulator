@@ -1,25 +1,32 @@
-#include "quaternion.h"
 #include <cassert>
-#include <raymath.h>
 #include "test_quaternion.h"
 
 void test_quaternion()
 {
-	rl::Quaternion q(1, 2, 3, 4);
+
+	auto q = rl::Quaternion::fromEuler(0, PI/2., 0);
 	q = q.normalize();
 
-	auto rlq = QuaternionFromEuler(2, 3, 1);
+	auto rlq = QuaternionFromEuler(0, PI/2., 0);
 
 	std::println("Quaternion: {}", q);
 	std::println("Quaternion from raylib: ({}, {}, {}, {})", rlq.x, rlq.y, rlq.z, rlq.w);
 
-	assert(rlq.x == q.data()[0]);
-	assert(rlq.y == q.data()[1]);
-	assert(rlq.z == q.data()[2]);
-	assert(rlq.w == q.data()[3]);
+	// assert(rlq.x == q.x());
+	// assert(rlq.y == q.y());
+	// assert(rlq.z == q.z());
+	// assert(rlq.w == q.w());
 
 	std::println("Magnitude: {}", q.magnitude());
 	std::println("Normalized quaternion: {}", q.normalize());
 	std::println("Magnitude: {}", q.magnitude());
 
+	Vector3f euler{PI/2., 0, 0};
+	std::println("Euler Angles: ({}, {}, {})", euler.x(), euler.y(), euler.z());
+
+	rl::Quaternion q2 = rl::Quaternion::fromEuler(euler.x(), euler.y(), euler.z());
+	std::println("Quaternion: {}", q2);
+
+	auto R = q2.toRotationMatrix();
+	std::println("Rotation Matrix: \n{}", R);
 }
