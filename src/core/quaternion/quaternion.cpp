@@ -1,6 +1,15 @@
 #include "quaternion.h"
 #include <raymath.h>
 
+Matrix3f rl::skewMarix(const Vector3f &v)
+{
+	Matrix3f skew;
+	skew << 0, -v.z(), v.y(),
+			v.z(), 0, -v.x(),
+			-v.y(), v.x(), 0;
+	return skew;
+}
+
 Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
 {
 	return Vector4f(quat.x, quat.y, quat.z, quat.w);
@@ -13,7 +22,7 @@ rl::Quaternion::Quaternion(float x, float y, float z, float w)
 
 rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 {
-	auto data = QuaternionFromEuler(y, z, x);
+	auto data = QuaternionFromEuler(x, y, z);
 	return Quaternion(data.x, data.y, data.z, data.w);
 }
 
@@ -63,6 +72,16 @@ Matrix4f rl::Quaternion::toEigRotMatrix() const
 					{mat.m2, mat.m6, mat.m10, mat.m14},
 					{mat.m3, mat.m7, mat.m11, mat.m15}};
 	return matrix;
+}
+
+Matrix3f rl::Quaternion::toRotationMatrix() const
+{
+	auto nu = m_data.w();
+	auto eta = m_data(Eigen::seq(0, 2));
+
+	Matrix3f etaSkew = skewMarix(eta);
+	auto R = Matrix3f::Identity() + 2 * nu * etaSkew + 2 * etaSkew * etaSkew;
+	return R;
 }
 
 Vector4f rl::Quaternion::toEigVector() const

@@ -6,6 +6,8 @@ set(HEADERS
 	quaternion.h
 )
 
+add_compile_options( -fPIC )
+
 add_library(quat_lib
 	${SRC}
 	${HEADERS}

@@ -8,11 +8,14 @@
 
 using Vector6f = Eigen::Matrix<float, 6, 1>;
 using Eigen::Vector3f;
-using Eigen::Matrix4f;
 using Eigen::Vector4f;
+using Eigen::Matrix3f;
+using Eigen::Matrix4f;
 
 namespace rl
 {
+
+Matrix3f skewMarix(const Vector3f &v);
 
 class Quaternion
 {
@@ -45,7 +48,8 @@ public:
 	::Quaternion toRlQuaternion() const;
 	::Matrix toRlRotMatrix() const;
 	Matrix4f toEigRotMatrix() const;
-	Eigen::Vector4f toEigVector() const;
+	Matrix3f toRotationMatrix() const;
+	Vector4f toEigVector() const;
 
 	Vector4f data() const;
 
@@ -88,9 +92,19 @@ struct std::formatter<rl::Quaternion> {
 	template <typename FormatContext>
 	auto format(const rl::Quaternion& p, FormatContext& ctx) const {
 		auto data = p.data();
-		return std::format_to(ctx.out(), "Quaternion({}, {}, {}, {})", data[0], data[1], data[2], data[3]);
+		return std::format_to(ctx.out(), "Quaternion (xyzw)  [{}, {}, {}, {}]", data.x(), data.y(), data.z(), data.w());
 	}
 };
 
+template <>
+struct std::formatter<Matrix3f> {
+	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
+	template <typename FormatContext>
+	auto format(const Matrix3f& p, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "[ {} {} {};\n  {} {} {};\n  {} {} {} ]", p(0), p(1), p(2),
+			p(3), p(4), p(5), p(6), p(7), p(8));
+	}
+};
 
 std::ostream &operator<<(std::ostream &os, const rl::Quaternion &q);
