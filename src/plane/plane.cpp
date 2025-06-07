@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <execution>
 #include <iostream>
+#include <raylib.h>
 #include <raymath.h>
-#include <iostream>
 
 Plane::Plane(const rl::Model& model)
 	: rl::Object(model)
@@ -19,6 +19,7 @@ Plane::Plane(const rl::Model& model)
 
 	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * m_mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
+	m_invMrb = m_invMrb.inverse();
 }
 
 Plane::~Plane()
@@ -45,6 +46,17 @@ Vector6f Plane::getTorque()
 	if (IsKeyDown(KEY_A)) tau[5] -= dTau;
 	else if (IsKeyDown(KEY_D)) tau[5] += dTau;
 
+	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
+		m_quat = rl::Quaternion::fromEuler(0, 0, 0);
+		tau = Vector6f::Zero();
+		m_feedbackTau = Vector6f::Zero();
+		m_rlModel.position = {0,0,0};
+	}
+
+	if (IsKeyDown(KEY_P)) {
+		std::println("Current position:\n\tX: {}\n\tY: {}\n\tZ: {}", m_rlModel.position.x, m_rlModel.position.y, m_rlModel.position.z);
+	}
+
 
 	tau *= 0.96;
 	for (auto& t : tau) {
@@ -68,13 +80,13 @@ Vector6f Plane::rigidBodyDynamics(Vector6f &tau, float dt)
 	auto tmp = m_inertiaMatrix * omega;
 
 	auto pt1 = omega.cross(m_mass * v);
-	auto pt2 = tmp.cross(omega) * -1;
+	auto pt2 = -1 * tmp.cross(omega);
 	m_feedbackTau = (Vector6f() << pt1, pt2).finished();
 
-	for (auto& t : m_feedbackTau) {
-		t = std::clamp(t, -1000.0f, 1000.0f);
-		t = std::abs(t) < 0.1f ? 0 : t;
-	}
+	// for (auto& t : m_feedbackTau) {
+	// 	t = std::clamp(t, -1000.0f, 1000.0f);
+	// 	t = std::abs(t) < 0.1f ? 0 : t;
+	// }
 
 	return nu;
 }
