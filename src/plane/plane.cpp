@@ -28,7 +28,8 @@ Plane::~Plane()
 
 Vector6f Plane::getTorque()
 {
-	float dTau = 50;
+	float dTau = 300;
+	float dM = 12.5;
 	static Vector6f tau{ 0, 0, 0, 0, 0, 0 };
 
 	if (IsKeyDown(KEY_LEFT)) tau[0] += dTau;
@@ -37,14 +38,19 @@ Vector6f Plane::getTorque()
 	if (IsKeyDown(KEY_UP)) tau[2] += dTau;
 	else if (IsKeyDown(KEY_DOWN)) tau[2] -= dTau;
 
-	if (IsKeyDown(KEY_W)) tau[3] += dTau;
-	else if (IsKeyDown(KEY_S)) tau[3] -= dTau;
+	if (IsKeyDown(KEY_W)) tau[3] += dM;
+	else if (IsKeyDown(KEY_S)) tau[3] -= dM;
 
-	if (IsKeyDown(KEY_Q)) tau[4] += dTau;
-	else if (IsKeyDown(KEY_E)) tau[4] -= dTau;
+	if (IsKeyDown(KEY_Q)) tau[4] += dM;
+	else if (IsKeyDown(KEY_E)) tau[4] -= dM;
 
-	if (IsKeyDown(KEY_A)) tau[5] -= dTau;
-	else if (IsKeyDown(KEY_D)) tau[5] += dTau;
+	if (IsKeyDown(KEY_A)) tau[5] -= dM;
+	else if (IsKeyDown(KEY_D)) tau[5] += dM;
+
+	if (IsKeyDown(KEY_MINUS))
+		m_rlModel.scale -= 0.01f;
+	if (IsKeyDown(KEY_EQUAL))
+		m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
 		m_quat = rl::Quaternion::fromEuler(0, 0, 0);
