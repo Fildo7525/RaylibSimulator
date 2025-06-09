@@ -29,7 +29,7 @@ print("Combined Mesh Inertia Tensor:")
 print(combined_mesh.moment_inertia)
 
 # To get the inertia tensor for a specific mass (e.g., 5.0 units):
-mass = 5000.0
+mass = 6_390
 # The density is mass / volume
 density = mass / combined_mesh.volume
 # The inertia tensor is scaled by the density
