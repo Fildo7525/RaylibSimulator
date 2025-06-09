@@ -106,6 +106,14 @@ void Application::run()
 
 			EndMode3D();
 
+			DrawRectangle(10, 10, 250, 113, Fade(SKYBLUE, 0.5));
+			DrawRectangleLines( 10, 10, 250, 113, BLUE);
+
+			const auto &p = m_objects[0]->rlModel().position;
+			const auto &q = m_objects[0]->rotation().toEuler(true);
+			DrawText(TextFormat("Position:\n %10.2f\n %10.2f\n %10.2f", p.x, p.y, p.z), 20, 20, 10, BLACK);
+			DrawText(TextFormat("Rotation:\n %10.2f\n %10.2f\n %10.2f", q(0), q(1), q(2)), 20, 70, 10, BLACK);
+
 		EndDrawing();
 	}
 }
