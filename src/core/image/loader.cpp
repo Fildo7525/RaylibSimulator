@@ -11,12 +11,14 @@ rl::ImageLoader &rl::ImageLoader::instance()
 std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 {
 	std::filesystem::path modelPath = model.modelPath;
-	std::filesystem::exists(modelPath) ?
+	bool modelExists = std::filesystem::exists(modelPath);
+	modelExists ?
 		std::print("Model path exists: {}\n", modelPath.string()) :
 		std::print("Model path does not exist: {}\n", modelPath.string());
 
 	std::filesystem::path texturePath = model.texturePath;
-	std::filesystem::exists(texturePath) ?
+	bool textureExists = std::filesystem::exists(texturePath);
+	textureExists ?
 		std::print("Texture path exists: {}\n", texturePath.string()) :
 		std::print("Texture path does not exist: {}\n", texturePath.string());
 
@@ -27,9 +29,15 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 	if (it != m_images.end())
 		return it->second;
 
-	::Model m = LoadModel(model.modelPath.c_str());				  // Load model
-	Texture2D texture = LoadTexture(model.texturePath.c_str());  // Load model texture
-	m.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;			// Set map diffuse texture
+	::Model m = LoadModel(model.modelPath.c_str());
+	if (texturePath.empty() || !textureExists) {
+		std::print("No texture path provided or texture does not exist: {}\n", texturePath.string());
+		m.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = ::Texture2D(); // Set empty texture
+	} else {
+		std::print("Loading texture from path: {}\n", texturePath.string());
+		Texture2D texture = LoadTexture(model.texturePath.c_str());  // Load model texture
+		m.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;			// Set map diffuse texture
+	}
 	m_images[hash] = std::make_shared<::Model>(m);
 	return m_images[hash];
 }
