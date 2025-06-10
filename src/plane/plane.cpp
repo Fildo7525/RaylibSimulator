@@ -108,12 +108,11 @@ std::pair<Eigen::Vector3f, rl::Quaternion> Plane::kinematics(const Vector6f &nu,
 {
 	constexpr int L = 100;
 	Eigen::Vector3f p;
-	rl::Quaternion tau_bar(nu[0], nu[1], nu[2], 0);
 	rl::Quaternion omega_bar(nu[3], nu[4], nu[5], 0);
 	rl::Quaternion q = m_quat;
 
 	// Position
-	rl::Quaternion p_dot = q * (tau_bar * q.cconjugate());
+	rl::Quaternion p_dot = q.rotate(nu.head<3>());
 	p = p_dot.data().head<3>() * dt;
 
 	// Rotation
