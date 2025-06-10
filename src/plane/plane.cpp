@@ -64,10 +64,16 @@ Vector6f Plane::getTorque()
 	}
 
 
-	tau *= 0.96;
-	for (auto& t : tau) {
+	for (int i = 0; i < tau.size(); ++i) {
+		auto &t = tau[i];
 		if (std::abs(t) < 0.01f) t = 0;
-		t = std::clamp(t, -1000.0f, 1000.0f);
+		else if (i < 3) {
+			tau *= 0.99;
+			t = std::clamp(t, -10'000.0f, 10'000.0f);
+		} else {
+			tau *= 0.96;
+			t = std::clamp(t, -10.0f, 10.0f);
+		}
 	}
 
 	return tau;
