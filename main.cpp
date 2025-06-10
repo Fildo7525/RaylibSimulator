@@ -15,7 +15,7 @@ int main(void)
 
 	rl::Application app(config);
 
-	app.addObject(Plane::create(rl::Model{ PLANE_MODEL_PATH, PLANE_TEXTURE_PATH }));
+	app.addObject(Plane::create(rl::Model(PLANE_MODEL_PATH, PLANE_TEXTURE_PATH)));
 
 	app.run();
 
