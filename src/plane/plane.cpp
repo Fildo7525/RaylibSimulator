@@ -87,7 +87,8 @@ Vector6f Plane::rigidBodyDynamics(Vector6f &tau, float dt)
 
 	auto pt1 = omega.cross(m_mass * v);
 	auto pt2 = -1 * tmp.cross(omega);
-	m_feedbackTau = (Vector6f() << pt1, pt2).finished();
+	m_feedbackTau.head<3>() = pt1;
+	m_feedbackTau.tail<3>() = pt2;
 
 	// for (auto& t : m_feedbackTau) {
 	// 	t = std::clamp(t, -1000.0f, 1000.0f);
