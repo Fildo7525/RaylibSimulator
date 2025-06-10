@@ -30,9 +30,17 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 		return it->second;
 
 	::Model m = LoadModel(model.modelPath.c_str());
+	if (!IsModelValid(m)) {
+		std::print("[Error]: Model is not valid: {}\n", model.modelPath);
+		return nullptr;
+	}
+
+	std::print("Model materials count: {}\n", m.materialCount);
 	if (texturePath.empty() || !textureExists) {
-		std::print("No texture path provided or texture does not exist: {}\n", texturePath.string());
-		m.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = ::Texture2D(); // Set empty texture
+		for (int i = 0; i < m.materialCount; ++i) {
+			m.materials[i].maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
+		}
+		std::print("[Warning]: No texture path provided or texture does not exist: {}\n", texturePath.string());
 	} else {
 		std::print("Loading texture from path: {}\n", texturePath.string());
 		Texture2D texture = LoadTexture(model.texturePath.c_str());  // Load model texture
