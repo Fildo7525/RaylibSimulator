@@ -5,6 +5,7 @@ void test_quaternion()
 {
 
 	auto q = rl::Quaternion::fromEuler(0, PI/2., 0);
+	std::println("Quaternion: {}", q);
 	q = q.normalize();
 
 	auto rlq = QuaternionFromEuler(0, PI/2., 0);
@@ -29,4 +30,7 @@ void test_quaternion()
 
 	auto R = q2.toRotationMatrix();
 	std::println("Rotation Matrix: \n{}", R);
+
+	auto rotated_vector = q.rotate(Vector3{1, 2, 3});
+	std::println("Rotated Vector: {}", rotated_vector);
 }
