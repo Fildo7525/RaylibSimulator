@@ -24,7 +24,7 @@ void test_quaternion()
 	Vector3f euler{PI/2., 0, 0};
 	std::println("Euler Angles: ({}, {}, {})", euler.x(), euler.y(), euler.z());
 
-	rl::Quaternion q2 = rl::Quaternion::fromEuler(euler.x(), euler.y(), euler.z());
+	rl::Quaternion q2 = rl::Quaternion::fromEuler(euler);
 	std::println("Quaternion: {}", q2);
 
 	auto R = q2.toRotationMatrix();

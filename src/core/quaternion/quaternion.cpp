@@ -15,6 +15,11 @@ Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
 	return Vector4f(quat.x, quat.y, quat.z, quat.w);
 }
 
+Vector3 rl::Quaternion::toRlVector3() const
+{
+	return Vector3{ m_data.x(), m_data.y(), m_data.z() };
+}
+
 rl::Quaternion::Quaternion(float x, float y, float z, float w)
 	: m_data{ x, y, z, w }
 {
@@ -24,6 +29,16 @@ rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 {
 	auto data = QuaternionFromEuler(x, y, z);
 	return Quaternion(data.x, data.y, data.z, data.w);
+}
+
+rl::Quaternion rl::Quaternion::fromEuler(Vector3f euler)
+{
+	return Quaternion::fromEuler(euler(0), euler(1), euler(2));
+}
+
+rl::Quaternion rl::Quaternion::fromEuler(Vector3 euler)
+{
+	return Quaternion::fromEuler(euler.x, euler.y, euler.z);
 }
 
 Vector3f rl::Quaternion::toEuler(bool degrees) const
@@ -118,16 +133,6 @@ rl::Quaternion rl::Quaternion::cnormalize() const
 	return Quaternion(q_data[0], q_data[1], q_data[2], q_data[3]);
 }
 
-rl::Quaternion rl::Quaternion::crotate(const Quaternion& q) const
-{
-	auto conj = *this;
-	conj = conj.conjugate();
-	conj.m_data = toEigVector(QuaternionMultiply(toRlQuaternion(), conj.toRlQuaternion()));
-	conj.m_data = toEigVector(QuaternionMultiply(q.toRlQuaternion(), conj.toRlQuaternion()));
-
-	return conj;
-}
-
 rl::Quaternion rl::Quaternion::ctranspose() const
 {
 	Quaternion conj = *this;
@@ -158,15 +163,19 @@ rl::Quaternion &rl::Quaternion::normalize()
 	return *this;
 }
 
-rl::Quaternion &rl::Quaternion::rotate(const Quaternion& q)
+rl::Quaternion rl::Quaternion::rotate(const Quaternion& q) const
 {
-	auto conj = *this;
-	conj *= q.cconjugate();
+	return *this * (q * cconjugate());
+}
 
-	conj.m_data = toEigVector(QuaternionMultiply(q.toRlQuaternion(), conj.toRlQuaternion()));
-	m_data = toEigVector(QuaternionMultiply(toRlQuaternion(), conj.toRlQuaternion()));
+rl::Quaternion rl::Quaternion::rotate(const Vector3f &v) const
+{
+	return rotate(Quaternion(v(0), v(1), v(2), 0));
+}
 
-	return *this;
+rl::Quaternion rl::Quaternion::rotate(const Vector3 &v) const
+{
+	return rotate(Quaternion(v.x, v.y, v.z, 0));
 }
 
 rl::Quaternion rl::operator+(const rl::Quaternion& lhs, const rl::Quaternion& rhs)

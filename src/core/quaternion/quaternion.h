@@ -39,6 +39,8 @@ public:
 	float w() const { return m_data.w(); }
 
 	static rl::Quaternion fromEuler(float x, float y, float z);
+	static rl::Quaternion fromEuler(Vector3f euler);
+	static rl::Quaternion fromEuler(Vector3 euler);
 
 	Vector3f toEuler(bool degrees = false) const;
 
@@ -50,6 +52,7 @@ public:
 	Matrix4f toEigRotMatrix() const;
 	Matrix3f toRotationMatrix() const;
 	Vector4f toEigVector() const;
+	Vector3 toRlVector3() const;
 
 	Vector4f data() const;
 
@@ -57,13 +60,15 @@ public:
 
 	Quaternion cconjugate() const;
 	Quaternion cnormalize() const;
-	Quaternion crotate(const Quaternion &q) const;
 	Quaternion ctranspose() const;
 	float dot(const Quaternion &q) const;
 
 	Quaternion &conjugate();
 	Quaternion &normalize();
-	Quaternion &rotate(const Quaternion &q);
+
+	Quaternion rotate(const Quaternion &q) const;
+	Quaternion rotate(const Vector3f &v) const;
+	Quaternion rotate(const Vector3 &v) const;
 
 	Quaternion &operator+=(const Quaternion &rhs);
 	Quaternion &operator-=(const Quaternion &rhs);
@@ -104,6 +109,26 @@ struct std::formatter<Matrix3f> {
 	auto format(const Matrix3f& p, FormatContext& ctx) const {
 		return std::format_to(ctx.out(), "[ {} {} {};\n  {} {} {};\n  {} {} {} ]", p(0), p(1), p(2),
 			p(3), p(4), p(5), p(6), p(7), p(8));
+	}
+};
+
+template <>
+struct std::formatter<Vector3f> {
+	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
+	template <typename FormatContext>
+	auto format(const Vector3f& p, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "[ {} {} {} ]", p(1), p(2), p(2));
+	}
+};
+
+template <>
+struct std::formatter<Vector3> {
+	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
+	template <typename FormatContext>
+	auto format(const Vector3& p, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "[ {} {} {} ]", p.x, p.y, p.z);
 	}
 };
 
