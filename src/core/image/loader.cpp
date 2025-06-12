@@ -1,6 +1,45 @@
 #include "loader.h"
+
 #include <filesystem>
+#include <fstream>
 #include <print>
+
+#include <nlohmann/json.hpp>
+
+using nlohmann::json;
+
+rl::Model rl::Model::fromFile(const rl::Path &configPath)
+{
+	rl::Model config;
+	std::println("Loading configuration from: {}", configPath.string());
+
+	std::ifstream file(configPath.string(), std::ifstream::in);
+	if (!file.is_open()) {
+		throw std::runtime_error("Configuration file [" + configPath.string() + "] not found");
+	}
+
+
+	json jsonConfig = json::parse(file);
+
+	// Read default types
+	config.modelPath = jsonConfig.value("modelPath", rl::Path("model.obj"));
+	config.scale = jsonConfig.value("scale", 1.0f);
+	config.mass = jsonConfig.value("mass", 1.0f);
+
+	// Read default vectors
+	std::array<float, 3> read = jsonConfig.value("position", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
+	config.position = Vector3{ read[0], read[1], read[2] };
+
+	read = jsonConfig.value("rotation", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
+	config.rotation = Vector3{ read[0], read[1], read[2] };
+
+	// Read optional texture path
+	if (jsonConfig.contains("texturePath")) {
+		config.texturePath = jsonConfig.value("texturePath", "model.png");
+	}
+
+	return config;
+}
 
 rl::ImageLoader &rl::ImageLoader::instance()
 {

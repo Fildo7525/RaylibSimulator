@@ -21,4 +21,5 @@ target_link_libraries(
 	image_lib
 PUBLIC
 	raylib
+	nlohmann_json::nlohmann_json
 )
