@@ -1,12 +1,25 @@
 cmake_minimum_required(VERSION 3.31.2)
 project(first VERSION 3.31.2)
 
+include(FetchContent)
+
+FetchContent_Declare(
+	json
+	GIT_REPOSITORY https://github.com/nlohmann/json.git
+	# GIT_TAG 55f93686c01528224f448c19128836e7df245f72 # v3.12.0
+	GIT_TAG v3.12.0
+	SYSTEM
+)
+
+FetchContent_MakeAvailable(json)
+
 set(CMAKE_CXX_COMPILER /usr/bin/g++-14)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
+
 
 add_definitions(-DPLANE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/plane.obj")
 add_definitions(-DDRONE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/drone_body.obj")
