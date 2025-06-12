@@ -8,6 +8,9 @@
 #include "loader.h"
 #include "quaternion.h"
 
+using Matrix6f = Eigen::Matrix<float, 6, 6>;
+using Matrix3f = Eigen::Matrix<float, 3, 3>;
+
 namespace rl
 {
 
@@ -21,6 +24,7 @@ public:
 
 	void loadModel();
 
+	Vector6f rigidBody(Vector6f &tau, float dt);
 	rl::Quaternion rotation() const;
 
 	void transform(const rl::Quaternion &quat);
@@ -39,6 +43,9 @@ public:
 protected:
 	rl::Model m_rlModel;
 	std::shared_ptr<::Model> m_model;
+	Matrix6f m_invMrb;
+	Matrix3f m_inertiaMatrix;
+	Vector6f m_feedbackTau;
 };
 
 }

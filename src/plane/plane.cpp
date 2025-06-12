@@ -10,16 +10,8 @@
 Plane::Plane(const rl::Model& model)
 	: rl::Object(model)
 	, m_quat(rl::Quaternion::fromEuler(model.rotation))
-	, m_invMrb(Matrix6f::Zero())
-	, m_inertiaMatrix(Matrix3f::Zero())
-	, m_feedbackTau(Vector6f::Zero())
 {
 	std::cout << "Model rotation: " << rl::Quaternion::fromEuler(model.rotation).toEuler() << std::endl;
-	m_inertiaMatrix.diagonal() << model.mass*2/6, model.mass*2/6, model.mass*2/6;
-
-	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
-	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
-	m_invMrb = m_invMrb.inverse();
 }
 
 Plane::~Plane()
@@ -56,7 +48,7 @@ Vector6f Plane::getTorque()
 		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
 		tau = Vector6f::Zero();
 		m_feedbackTau = Vector6f::Zero();
-		m_rlModel.position = m_rlModel.position;
+		m_rlModel.position = Vector3{0, 0, 0};
 	}
 
 	for (int i = 0; i < tau.size(); ++i) {
@@ -72,26 +64,6 @@ Vector6f Plane::getTorque()
 	}
 
 	return tau;
-}
-
-Vector6f Plane::rigidBodyDynamics(Vector6f &tau, float dt)
-{
-	tau -= m_feedbackTau;
-
-	Vector6f nu_dot = m_invMrb * tau;
-	Vector6f nu = nu_dot * dt;
-
-	Vector3f v = nu.head<3>();
-	Vector3f omega = nu.tail<3>();
-
-	auto tmp = m_inertiaMatrix * omega;
-
-	auto pt1 = omega.cross(m_rlModel.mass * v);
-	auto pt2 = -1 * tmp.cross(omega);
-	m_feedbackTau.head<3>() = pt1;
-	m_feedbackTau.tail<3>() = pt2;
-
-	return nu;
 }
 
 std::pair<Eigen::Vector3f, rl::Quaternion> Plane::kinematics(const Vector6f &nu, float dt)
@@ -120,7 +92,7 @@ void Plane::update(float dt)
 {
 	auto tau = getTorque();
 	/* std::cout << "Torque: " << tau << std::endl; */
-	auto nu = rigidBodyDynamics(tau, dt);
+	auto nu = rigidBody(tau, dt);
 	auto [p, q] = kinematics(nu, dt);
 
 	// Tranformation matrix for rotations
