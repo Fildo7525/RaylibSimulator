@@ -9,15 +9,15 @@
 
 Plane::Plane(const rl::Model& model)
 	: rl::Object(model)
-	, m_quat(rl::Quaternion::fromEuler(0, 0, 0))
-	, m_mass(2.0f)
+	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 	, m_invMrb(Matrix6f::Zero())
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
 {
-	m_inertiaMatrix.diagonal() << m_mass*2/6, m_mass*2/6, m_mass*2/6;
+	std::cout << "Model rotation: " << rl::Quaternion::fromEuler(model.rotation).toEuler() << std::endl;
+	m_inertiaMatrix.diagonal() << model.mass*2/6, model.mass*2/6, model.mass*2/6;
 
-	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * m_mass;
+	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
 	m_invMrb = m_invMrb.inverse();
 }
@@ -53,16 +53,11 @@ Vector6f Plane::getTorque()
 		m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
-		m_quat = rl::Quaternion::fromEuler(0, 0, 0);
+		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
 		tau = Vector6f::Zero();
 		m_feedbackTau = Vector6f::Zero();
-		m_rlModel.position = {0,0,0};
+		m_rlModel.position = m_rlModel.position;
 	}
-
-	if (IsKeyDown(KEY_P)) {
-		std::println("Current position:\n\tX: {}\n\tY: {}\n\tZ: {}", m_rlModel.position.x, m_rlModel.position.y, m_rlModel.position.z);
-	}
-
 
 	for (int i = 0; i < tau.size(); ++i) {
 		auto &t = tau[i];
@@ -72,7 +67,7 @@ Vector6f Plane::getTorque()
 			t = std::clamp(t, -10'000.0f, 10'000.0f);
 		} else {
 			tau *= 0.96;
-			t = std::clamp(t, -10.0f, 10.0f);
+			t = std::clamp(t, -1000.0f, 1000.0f);
 		}
 	}
 
@@ -91,15 +86,10 @@ Vector6f Plane::rigidBodyDynamics(Vector6f &tau, float dt)
 
 	auto tmp = m_inertiaMatrix * omega;
 
-	auto pt1 = omega.cross(m_mass * v);
+	auto pt1 = omega.cross(m_rlModel.mass * v);
 	auto pt2 = -1 * tmp.cross(omega);
 	m_feedbackTau.head<3>() = pt1;
 	m_feedbackTau.tail<3>() = pt2;
-
-	// for (auto& t : m_feedbackTau) {
-	// 	t = std::clamp(t, -1000.0f, 1000.0f);
-	// 	t = std::abs(t) < 0.1f ? 0 : t;
-	// }
 
 	return nu;
 }

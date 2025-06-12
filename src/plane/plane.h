@@ -25,7 +25,6 @@ public:
 
 private:
 	rl::Quaternion m_quat;
-	float m_mass;
 	Matrix6f m_invMrb;
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;
