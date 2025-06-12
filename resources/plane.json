@@ -1,0 +1,8 @@
+{
+	"modelPath": "../resources/model/plane.obj",
+	"texturePath": "../resources/texture/plane_diffuse.png",
+	"position": [0, 0, 0],
+	"rotation": [0, 0, 0],
+	"scale": 0.1,
+	"mass": 4
+}

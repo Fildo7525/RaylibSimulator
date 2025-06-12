@@ -1,0 +1,6 @@
+{
+	"modelPath": "../resources/model/drone_body.obj",
+	"position": [0, 0, 0],
+	"rotation": [1.570796327, 0, 0],
+	"scale": 100
+}
