@@ -15,7 +15,7 @@ int main(void)
 
 	rl::Application app(config);
 
-	app.addObject(Plane::create(rl::Model::fromFile("../resources/plane.json")));
+	app.addObject(Plane::create(rl::Model::fromFile(PLANE_CONFIG_PATH)));
 
 	app.run();
 

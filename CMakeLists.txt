@@ -21,9 +21,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
 
-add_definitions(-DPLANE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/plane.obj")
-add_definitions(-DDRONE_MODEL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/model/drone_body.obj")
-add_definitions(-DPLANE_TEXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/texture/plane_diffuse.png")
+add_definitions(-DPLANE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/plane.json")
+add_definitions(-DDRONE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/drone.json")
 
 find_package(raylib 3.0 REQUIRED)
 find_package(Eigen3 3.4 REQUIRED)
@@ -46,6 +45,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 PUBLIC
 	app_lib
+	drone_lib
 	plane_lib
 )
 
