@@ -27,11 +27,12 @@ class Quaternion
 	friend Quaternion operator/(const Quaternion &lhs, const Quaternion &rhs);
 	friend float operator&(const Quaternion &lhs, const Quaternion &rhs);
 
-private:
-	Eigen::Vector4f toEigVector(const ::Quaternion &quat) const;
-
 public:
 	Quaternion(float x, float y, float z, float w);
+	explicit Quaternion(::Quaternion quat)
+		: m_data{ quat.x, quat.y, quat.z, quat.w }
+	{
+	};
 
 	float x() const { return m_data.x(); }
 	float y() const { return m_data.y(); }
@@ -39,13 +40,13 @@ public:
 	float w() const { return m_data.w(); }
 
 	static rl::Quaternion fromEuler(float x, float y, float z);
-	static rl::Quaternion fromEuler(Vector3f euler);
-	static rl::Quaternion fromEuler(Vector3 euler);
+	static rl::Quaternion fromEuler(const Vector3f &euler);
+	static rl::Quaternion fromEuler(const Vector3 &euler);
 
 	Vector3f toEuler(bool degrees = false) const;
 
-	static rl::Quaternion fromEigRotMatrix(Matrix4f matrix);
-	static rl::Quaternion fromRlRotMatrix(::Matrix matrix);
+	static rl::Quaternion fromEigRotMatrix(const Matrix4f &matrix);
+	static rl::Quaternion fromRlRotMatrix(const ::Matrix &matrix);
 
 	::Quaternion toRlQuaternion() const;
 	::Matrix toRlRotMatrix() const;

@@ -10,11 +10,6 @@ Matrix3f rl::skewMarix(const Vector3f &v)
 	return skew;
 }
 
-Vector4f rl::Quaternion::toEigVector(const ::Quaternion &quat) const
-{
-	return Vector4f(quat.x, quat.y, quat.z, quat.w);
-}
-
 Vector3 rl::Quaternion::toRlVector3() const
 {
 	return Vector3{ m_data.x(), m_data.y(), m_data.z() };
@@ -27,18 +22,17 @@ rl::Quaternion::Quaternion(float x, float y, float z, float w)
 
 rl::Quaternion rl::Quaternion::fromEuler(float x, float y, float z)
 {
-	auto data = QuaternionFromEuler(x, y, z);
-	return Quaternion(data.x, data.y, data.z, data.w);
+	return Quaternion::fromEuler(Vector3{x, y, z});
 }
 
-rl::Quaternion rl::Quaternion::fromEuler(Vector3f euler)
+rl::Quaternion rl::Quaternion::fromEuler(const Vector3f &euler)
 {
-	return Quaternion::fromEuler(euler(0), euler(1), euler(2));
+	return Quaternion(QuaternionFromEuler(euler.x(), euler.y(), euler.z()));
 }
 
-rl::Quaternion rl::Quaternion::fromEuler(Vector3 euler)
+rl::Quaternion rl::Quaternion::fromEuler(const Vector3 &euler)
 {
-	return Quaternion::fromEuler(euler.x, euler.y, euler.z);
+	return Quaternion(QuaternionFromEuler(euler.x, euler.y, euler.z));
 }
 
 Vector3f rl::Quaternion::toEuler(bool degrees) const
@@ -50,21 +44,19 @@ Vector3f rl::Quaternion::toEuler(bool degrees) const
 	return euler;
 }
 
-rl::Quaternion rl::Quaternion::fromEigRotMatrix(Matrix4f matrix)
+rl::Quaternion rl::Quaternion::fromEigRotMatrix(const Matrix4f &matrix)
 {
 	::Matrix mat = { matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
 					 matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
 					 matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
 					 matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3) };
 
-	auto data = QuaternionFromMatrix(mat);
-	return Quaternion(data.x, data.y, data.z, data.w);;
+	return Quaternion(QuaternionFromMatrix(mat));
 }
 
-rl::Quaternion rl::Quaternion::fromRlRotMatrix(::Matrix matrix)
+rl::Quaternion rl::Quaternion::fromRlRotMatrix(const ::Matrix &matrix)
 {
-	auto data = QuaternionFromMatrix(matrix);
-	return Quaternion(data.x, data.y, data.z, data.w);
+	return Quaternion(QuaternionFromMatrix(matrix));
 }
 
 ::Quaternion rl::Quaternion::toRlQuaternion() const
