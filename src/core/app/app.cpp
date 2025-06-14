@@ -76,7 +76,7 @@ void Application::run()
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
-			m_camera.target = m_objects[0]->rlModel().position;
+			m_camera.target = m_objects[0]->rlModel().position + Vector3{0.0f, 1.0f, 0.0f};
 
 			Vector3 cameraPos = m_objects[0]->rotation().rotate(CAMERA_DEFAULT_POSITION).toRlVector3();
 			m_camera.position = m_camera.target + cameraPos;
