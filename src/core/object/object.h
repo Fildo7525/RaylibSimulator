@@ -14,6 +14,33 @@ using Matrix3f = Eigen::Matrix<float, 3, 3>;
 namespace rl
 {
 
+inline Matrix3f Rx(float angle)
+{
+	return Matrix3f{
+		{1, 0, 0},
+		{0, std::cos(angle), -std::sin(angle)},
+		{0, std::sin(angle), std::cos(angle)}
+	};
+}
+
+inline Matrix3f Ry(float angle)
+{
+	return Matrix3f{
+		{std::cos(angle), 0, std::sin(angle)},
+		{0, 1, 0},
+		{-std::sin(angle), 0, std::cos(angle)}
+	};
+}
+
+inline Matrix3f Rz(float angle)
+{
+	return Matrix3f{
+		{std::cos(angle), -std::sin(angle), 0},
+		{std::sin(angle), std::cos(angle), 0},
+		{0, 0, 1}
+	};
+}
+
 class Object
 {
 public:
