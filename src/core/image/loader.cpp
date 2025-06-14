@@ -8,6 +8,8 @@
 
 using nlohmann::json;
 
+static size_t idCounter = 0;
+
 rl::Model rl::Model::fromFile(const rl::Path &configPath)
 {
 	rl::Model config;
@@ -17,7 +19,6 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 	if (!file.is_open()) {
 		throw std::runtime_error("Configuration file [" + configPath.string() + "] not found");
 	}
-
 
 	json jsonConfig = json::parse(file);
 
@@ -65,8 +66,12 @@ std::shared_ptr<::Model> rl::ImageLoader::loadModel(const rl::Model &model)
 	size_t hash = hasher(model.modelPath) ^ hasher(model.texturePath);
 
 	auto it = m_images.find(hash);
-	if (it != m_images.end())
-		return it->second;
+	if (it != m_images.end()) {
+		auto m = *it->second;
+		hash ^= std::hash<size_t>()(idCounter++);
+		m_images[hash] = std::make_shared<::Model>(m);
+		return m_images[hash];
+	}
 
 	::Model m = LoadModel(model.modelPath.c_str());
 	if (!IsModelValid(m)) {
