@@ -7,6 +7,8 @@
 #include <rcamera.h>
 #include <print>
 
+constexpr Vector3 CAMERA_DEFAULT_POSITION{ 0.0f, 5.0f, -15.0f };
+
 namespace rl
 {
 
@@ -29,7 +31,7 @@ Application::Application(const Config& config)
 	}
 
 	if (m_config.camera == nullptr) {
-		m_camera.position = (Vector3){ 0.0f, 50.0f, -120.0f };// Camera position perspective
+		m_camera.position = CAMERA_DEFAULT_POSITION;// Camera position perspective
 		m_camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };	  // Camera looking at point
 		m_camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };		  // Camera up vector (rotation towards target)
 		m_camera.fovy = 30.0f;								// Camera field-of-view Y
@@ -58,7 +60,7 @@ void Application::run()
 	SetWindowOpacity(m_config.opacity);
 	SetWindowSize(m_config.screenWidth, m_config.screenHeight);
 
-	UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
+	UpdateCamera(&m_camera, CAMERA_CUSTOM);
 
 	for (auto object : m_objects) {
 		object->loadModel();
@@ -71,32 +73,18 @@ void Application::run()
 			return;
 		}
 
-		if (IsKeyDown(KEY_ONE)) {
-			m_camera.up = Vector3{ 1.0f, 0.0f, 0.0f };
-		}
-		else if (IsKeyDown(KEY_TWO)) {
-			m_camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
-		}
-		else if (IsKeyDown(KEY_THREE)) {
-			m_camera.up = Vector3{ 0.0f, 10.0f, 0.0f };
-		}
-
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
 			m_camera.target = m_objects[0]->rlModel().position;
-			auto cameraPos = m_objects[0]->rotation().toRotationMatrix() * Vector3f{ 0.0f, 50.0f, -120.0f };
 
-			m_camera.position = Vector3Add(m_camera.target, Vector3{ cameraPos.x(), cameraPos.y(), cameraPos.z() });
-			// m_camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
-
-			// CameraRoll(&m_camera, m_objects[0]->rotation().toEuler().y());
-			// CameraPitch(&m_camera, m_objects[0]->rotation().toEuler().x(), true, true, false);
-			UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
+			Vector3 cameraPos = m_objects[0]->rotation().rotate(CAMERA_DEFAULT_POSITION).toRlVector3();
+			m_camera.position = m_camera.target + cameraPos;
+			m_camera.up = m_objects[0]->rotation().rotate(Vector3{0.0f, 1.0f, 0.0f}).normalize().toRlVector3();
 
 			BeginMode3D(m_camera);
 
-			DrawGrid(100, 10.0f);
+			DrawGrid(100, 1.0f);
 
 			float dt = GetFrameTime();
 			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this, &dt](Object::Ptr object) {
