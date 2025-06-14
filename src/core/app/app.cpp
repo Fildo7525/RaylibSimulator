@@ -66,6 +66,11 @@ void Application::run()
 		object->loadModel();
 	}
 
+	std::println("Loaded {} objects", m_objects.size());
+	auto rotate = [this](const Object::Ptr object, const Vector3 &rotation) {
+		return object->rotation().rotate(rotation).toRlVector3();
+	};
+
 	while (!WindowShouldClose())
 	{
 		if (IsKeyDown(KEY_ESCAPE)) {
@@ -76,11 +81,11 @@ void Application::run()
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
-			m_camera.target = m_objects[0]->rlModel().position + Vector3{0.0f, 1.0f, 0.0f};
+			m_camera.target = m_objects[0]->rlModel().position + rotate(m_objects[0], Vector3{0.0f, 1.0f, 0.0f});
 
-			Vector3 cameraPos = m_objects[0]->rotation().rotate(CAMERA_DEFAULT_POSITION).toRlVector3();
+			Vector3 cameraPos = rotate(m_objects[0], CAMERA_DEFAULT_POSITION);
 			m_camera.position = m_camera.target + cameraPos;
-			m_camera.up = m_objects[0]->rotation().rotate(Vector3{0.0f, 1.0f, 0.0f}).normalize().toRlVector3();
+			m_camera.up = rotate(m_objects[0], Vector3{0.0f, 1.0f, 0.0f});
 
 			BeginMode3D(m_camera);
 
