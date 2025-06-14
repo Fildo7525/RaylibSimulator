@@ -41,11 +41,15 @@ public:
 	 **/
 
 protected:
+	virtual void forceStop();
+
+protected:
 	rl::Model m_rlModel;
 	std::shared_ptr<::Model> m_model;
 	Matrix6f m_invMrb;
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;
+	Vector6f m_tau;
 };
 
 }

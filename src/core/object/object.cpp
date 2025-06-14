@@ -8,6 +8,7 @@ rl::Object::Object(const rl::Model &model)
 	, m_invMrb(Matrix6f::Zero())
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
+	, m_tau(Vector6f::Zero())
 {
 	std::println("Model path {}", m_rlModel.modelPath);
 	std::println("Texture path {}", m_rlModel.texturePath);
@@ -80,4 +81,11 @@ rl::Model rl::Object::rlModel() const
 std::shared_ptr<::Model> rl::Object::model() const
 {
 	return m_model;
+}
+
+void rl::Object::forceStop()
+{
+	m_rlModel.position = Vector3{ 0, 0, 0 };
+	m_feedbackTau = Vector6f::Zero();
+	m_tau = Vector6f::Zero();
 }
