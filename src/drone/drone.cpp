@@ -9,6 +9,7 @@
 
 Drone::Drone(const rl::Model& model)
 	: rl::Object(model)
+	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
 	std::cout << "Model rotation: " << rl::Quaternion::fromEuler(model.rotation).toEuler() << std::endl;
 }
@@ -27,6 +28,9 @@ Vector6f Drone::getTorque()
 	if (IsKeyDown(KEY_UP)) m_tau[1] += dTau;
 	else if (IsKeyDown(KEY_DOWN)) m_tau[1] -= dTau;
 
+	// if (IsKeyDown(KEY_UP)) m_tau[2] += dTau;
+	// else if (IsKeyDown(KEY_DOWN)) m_tau[2] -= dTau;
+
 	if (IsKeyDown(KEY_W)) m_tau[3] += dM;
 	else if (IsKeyDown(KEY_S)) m_tau[3] -= dM;
 
@@ -42,11 +46,10 @@ Vector6f Drone::getTorque()
 		m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
-		m_rlModel.rotation = Vector3{ 0, 0, 0 };
+		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
 		m_tau = Vector6f::Zero();
 		m_feedbackTau = Vector6f::Zero();
 		m_rlModel.position = Vector3{0, 0, 0};
-		m_eta = Vector6f::Zero();
 	}
 
 	for (int i = 0; i < m_tau.size(); ++i) {
@@ -66,38 +69,30 @@ Vector6f Drone::getTorque()
 
 std::pair<Vector3f, rl::Quaternion> Drone::kinematics(const Vector6f &nu, float dt)
 {
-	// Euler angles
-	float phi = m_eta[3];
-	float theta = m_eta[4];
-	float psi = m_eta[5];
+	constexpr int L = 100;
+	Vector3f p;
+	rl::Quaternion omega_bar(nu[3], nu[4], nu[5], 0);
 
-	Matrix3f R = rl::Rx(phi) * rl::Ry(theta) * rl::Rz(psi);
+	// Position
+	rl::Quaternion p_dot = m_quat.rotate(nu.head<3>());
+	p = p_dot.data().head<3>() * dt;
 
-	// Angular velocity transformation
-	Matrix3f T{
-		{1, std::sin(phi)*std::tan(theta), std::cos(phi)*std::tan(theta)},
-		{0, std::cos(phi), -std::sin(phi)},
-		{0, std::sin(phi)/std::cos(theta), std::cos(phi)/std::cos(theta)}
-	};
+	// Rotation
+	rl::Quaternion q_dot = 0.5 * (m_quat * omega_bar);
+	m_quat = m_quat + q_dot * dt;
 
-	Matrix6f J = Matrix6f::Zero();
-	J.block<3, 3>(0, 0) = R;
-	J.block<3, 3>(3, 3) = T;
+	/* std::println("transpose: {}, {}, {}, {}", transpose[0], transpose[1], transpose[2], transpose[3]); */
+	m_quat += L * (1 - m_quat.ctranspose().dot(m_quat)) * m_quat;
+	m_quat.normalize();
 
-	auto eta_dot = J * nu;
-
-	m_eta += eta_dot * dt;
-
-	auto q = rl::Quaternion::fromEuler(m_eta.tail<3>());
-	auto p = m_eta.head<3>();
-	return { p, q };
+	return { p, m_quat };
 }
 
 void Drone::update(float dt)
 {
-	// auto m_tau = getTorque();
+	auto tau = getTorque();
 	/* std::cout << "Torque: " << m_tau << std::endl; */
-	auto nu = rigidBody(m_tau, dt);
+	auto nu = rigidBody(tau, dt);
 	auto [p, q] = kinematics(nu, dt);
 
 	// Tranformation matrix for rotations

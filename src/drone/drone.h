@@ -20,13 +20,6 @@ public:
 
 	void update(float dt) override;
 
-protected:
-	void forceStop() override
-	{
-		m_eta = Vector6f::Zero();
-		Object::forceStop();
-	}
-
 private:
-	Vector6f m_eta{ 0, 0, 0, 0, 0, 0 };
+	rl::Quaternion m_quat;
 };
