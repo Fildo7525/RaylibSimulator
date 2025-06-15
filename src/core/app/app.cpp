@@ -52,6 +52,7 @@ void rl::Application::addObject(rl::Object::Ptr model)
 
 void Application::run()
 {
+	static uint8_t idx = 0;
 	SetWindowMonitor(m_config.monitor);
 	InitWindow(m_config.screenWidth, m_config.screenHeight, m_config.windowTitle.c_str());
 
@@ -78,14 +79,17 @@ void Application::run()
 			return;
 		}
 
+		if (IsKeyPressed(KEY_I)) {
+			idx = (idx + 1) % m_objects.size();
+			std::println("Current object index: {}", idx);
+		}
+
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
-			m_camera.target = m_objects[0]->rlModel().position + rotate(m_objects[0], Vector3{0.0f, 1.0f, 0.0f});
-
-			Vector3 cameraPos = rotate(m_objects[0], CAMERA_DEFAULT_POSITION);
-			m_camera.position = m_camera.target + cameraPos;
-			m_camera.up = rotate(m_objects[0], Vector3{0.0f, 1.0f, 0.0f});
+			m_camera.target = m_objects[idx]->rlModel().position + rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
+			m_camera.position = m_camera.target + rotate(m_objects[idx], CAMERA_DEFAULT_POSITION);
+			m_camera.up = rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
 
 			BeginMode3D(m_camera);
 
