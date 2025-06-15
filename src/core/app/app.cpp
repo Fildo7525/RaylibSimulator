@@ -87,9 +87,10 @@ void Application::run()
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
-			m_camera.target = m_objects[idx]->rlModel().position + rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
-			m_camera.position = m_camera.target + rotate(m_objects[idx], CAMERA_DEFAULT_POSITION);
-			m_camera.up = rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
+			const auto &model = m_objects[idx]->rlModel();
+			m_camera.target = model.position + rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
+			m_camera.position = m_camera.target + rotate(m_objects[idx], model.camera.offset);
+			m_camera.up = rotate(m_objects[idx], model.camera.up);
 
 			BeginMode3D(m_camera);
 
