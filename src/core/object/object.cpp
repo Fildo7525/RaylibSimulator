@@ -85,7 +85,7 @@ std::shared_ptr<::Model> rl::Object::model() const
 
 void rl::Object::forceStop()
 {
-	m_rlModel.position = Vector3{ 0, 0, 0 };
+	m_rlModel.position.y = 0.0f;
 	m_feedbackTau = Vector6f::Zero();
 	m_tau = Vector6f::Zero();
 }
