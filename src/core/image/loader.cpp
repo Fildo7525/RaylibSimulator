@@ -34,11 +34,28 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 	read = jsonConfig.value("rotation", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
 	config.rotation = Vector3{ read[0], read[1], read[2] };
 
+	// Camera configuration
+	read = jsonConfig.value("camera", json::object()).value("offset", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
+	config.camera.offset = Vector3{ read[0], read[1], read[2] };
+	read = jsonConfig.value("camera", json::object()).value("up", std::array<float, 3>{ 0.0f, 1.0f, 0.0f });
+	config.camera.up = Vector3{ read[0], read[1], read[2] };
+	config.camera.fovY = jsonConfig.value("camera", json::object()).value("fov", 30.f);
+
 	// Read optional texture path
 	if (jsonConfig.contains("texturePath")) {
 		config.texturePath = jsonConfig.value("texturePath", "model.png");
 	}
 
+	std::println("Loaded configuration: modelPath={}\n texturePath={}\n position=({:.2f}, {:.2f}, {:.2f})\n "
+		"rotation=({:.2f}, {:.2f}, {:.2f})\n scale={:.2f}\n mass={:.2f}\n camera.position=({:.2f}, {:.2f}, {:.2f})\n "
+		"camera.rotation=({:.2f}, {:.2f}, {:.2f})\n camera.fovY={:.2f}",
+		config.modelPath, config.texturePath,
+		config.position.x, config.position.y, config.position.z,
+		config.rotation.x, config.rotation.y, config.rotation.z,
+		config.scale, config.mass,
+		config.camera.offset.x, config.camera.offset.y, config.camera.offset.z,
+		config.camera.up.x, config.camera.up.y, config.camera.up.z,
+		config.camera.fovY);
 	return config;
 }
 
