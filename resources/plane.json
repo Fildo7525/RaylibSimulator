@@ -4,5 +4,14 @@
 	"position": [0, 0, 0],
 	"rotation": [0, 0, 0],
 	"scale": 0.1,
-	"mass": 4
+	"mass": 4,
+	"thrust": [-10000, 10000],
+	"dThrust": 300,
+	"moment": [-500, 500],
+	"dMoment": 12.5,
+	"camera": {
+		"offset": [0, 5, -15],
+		"up": [0, 1, 0],
+		"fov": 30
+	}
 }

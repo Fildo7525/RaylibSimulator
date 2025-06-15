@@ -20,8 +20,8 @@ Plane::~Plane()
 
 Vector6f Plane::getTorque()
 {
-	float dTau = 300;
-	float dM = 12.5;
+	const float &dTau = m_rlModel.dThrust;
+	const float &dM = m_rlModel.dMoment;
 	static Vector6f m_tau{ 0, 0, 0, 0, 0, 0 };
 
 	if (IsKeyDown(KEY_LEFT)) m_tau[0] += dTau;
@@ -39,10 +39,10 @@ Vector6f Plane::getTorque()
 	if (IsKeyDown(KEY_A)) m_tau[5] -= dM;
 	else if (IsKeyDown(KEY_D)) m_tau[5] += dM;
 
-	if (IsKeyDown(KEY_MINUS))
-		m_rlModel.scale -= 0.01f;
-	if (IsKeyDown(KEY_EQUAL))
-		m_rlModel.scale += 0.01f;
+	// if (IsKeyDown(KEY_MINUS))
+	// 	m_rlModel.scale -= 0.01f;
+	// if (IsKeyDown(KEY_EQUAL))
+	// 	m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
 		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
@@ -56,10 +56,10 @@ Vector6f Plane::getTorque()
 		if (std::abs(t) < 0.01f) t = 0;
 		else if (i < 3) {
 			m_tau *= 0.99;
-			t = std::clamp(t, -10'000.0f, 10'000.0f);
+			t = std::clamp(t, m_rlModel.thrust.x, m_rlModel.thrust.y);
 		} else {
 			m_tau *= 0.96;
-			t = std::clamp(t, -1000.0f, 1000.0f);
+			t = std::clamp(t, m_rlModel.moment.x, m_rlModel.moment.y);
 		}
 	}
 

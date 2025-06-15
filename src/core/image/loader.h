@@ -22,6 +22,10 @@ struct Model
 	Model() = default;
 	Model(const std::string &modelPath,
 		  const std::string &texturePath,
+		  float thrust,
+		  float dThrust,
+		  float dMoment,
+		  float moment,
 		  const Vector3 &position = Vector3{ 0.0f, 0.0f, 0.0f },
 		  const Vector3 &rotation = Vector3{ 0.0f, 0.0f, 0.0f },
 		  float scale = 1.0f,
@@ -34,6 +38,10 @@ struct Model
 		, scale(scale)
 		, mass(mass)
 		, camera(camera)
+		, thrust(thrust)
+		, moment(moment)
+		, dThrust(dThrust)
+		, dMoment(dMoment)
 	{
 	}
 
@@ -46,6 +54,10 @@ struct Model
 	float scale;
 	float mass;
 	Camera camera;
+	float dThrust;
+	Vector2 thrust; // Min and max thrust
+	float dMoment;
+	Vector2 moment; // Min and max thrust
 };
 
 class ImageLoader
