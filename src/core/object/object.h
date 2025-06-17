@@ -50,24 +50,27 @@ public:
 	virtual ~Object();
 
 	void loadModel();
+	void update(float dt);
 
-	Vector6f rigidBody(Vector6f &tau, float dt);
+	virtual Vector6f getTorque() = 0;
+
 	rl::Quaternion rotation() const;
-
-	void transform(const rl::Quaternion &quat);
-	void move(const Eigen::Vector3f &position);
-
 	void draw() const;
-	virtual void update(float dt) = 0;
 
 	rl::Model rlModel() const;
 	std::shared_ptr<::Model> model() const;
 
+protected:
+	Vector6f rigidBody(Vector6f &tau, float dt);
+	std::pair<Eigen::Vector3f, rl::Quaternion> kinematics(const Vector6f &nu, float dt);
+
+	void transform(const rl::Quaternion &quat);
+	void move(const Eigen::Vector3f &position);
+
+
 	/* TODO:
 	 * 1. Add collision check of the model and another object
 	 **/
-
-protected:
 	virtual void forceStop();
 
 protected:
@@ -77,6 +80,7 @@ protected:
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;
 	Vector6f m_tau;
+	rl::Quaternion m_quat;
 };
 
 }

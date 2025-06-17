@@ -9,9 +9,7 @@
 
 Plane::Plane(const rl::Model& model)
 	: rl::Object(model)
-	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
-	std::cout << "Model rotation: " << rl::Quaternion::fromEuler(model.rotation).toEuler() << std::endl;
 }
 
 Plane::~Plane()
@@ -66,35 +64,3 @@ Vector6f Plane::getTorque()
 	return m_tau;
 }
 
-std::pair<Eigen::Vector3f, rl::Quaternion> Plane::kinematics(const Vector6f &nu, float dt)
-{
-	constexpr int L = 100;
-	Vector3f p;
-	rl::Quaternion omega_bar(nu[3], nu[4], nu[5], 0);
-
-	// Position
-	rl::Quaternion p_dot = m_quat.rotate(nu.head<3>());
-	p = p_dot.data().head<3>() * dt;
-
-	// Rotation
-	rl::Quaternion q_dot = 0.5 * (m_quat * omega_bar);
-	m_quat = m_quat + q_dot * dt;
-
-	/* std::println("transpose: {}, {}, {}, {}", transpose[0], transpose[1], transpose[2], transpose[3]); */
-	m_quat += L * (1 - m_quat.ctranspose().dot(m_quat)) * m_quat;
-	m_quat.normalize();
-
-	return { p, m_quat };
-}
-
-void Plane::update(float dt)
-{
-	auto tau = getTorque();
-	/* std::cout << "Torque: " << tau << std::endl; */
-	auto nu = rigidBody(tau, dt);
-	auto [p, q] = kinematics(nu, dt);
-
-	// Tranformation matrix for rotations
-	transform(q);
-	move(p);
-}

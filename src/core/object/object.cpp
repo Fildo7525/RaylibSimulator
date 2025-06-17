@@ -9,6 +9,7 @@ rl::Object::Object(const rl::Model &model)
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
 	, m_tau(Vector6f::Zero())
+	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
 	std::println("Model path {}", m_rlModel.modelPath);
 	std::println("Texture path {}", m_rlModel.texturePath);
@@ -28,6 +29,39 @@ rl::Object::~Object()
 void rl::Object::loadModel()
 {
 	m_model = rl::ImageLoader::instance().loadModel(m_rlModel);
+}
+
+void rl::Object::update(float dt)
+{
+	auto tau = getTorque();
+	/* std::cout << "Torque: " << tau << std::endl; */
+	auto nu = rigidBody(tau, dt);
+	auto [p, q] = kinematics(nu, dt);
+
+	// Tranformation matrix for rotations
+	transform(q);
+	move(p);
+}
+
+rl::Quaternion rl::Object::rotation() const
+{
+	return rl::Quaternion::fromRlRotMatrix(m_model->transform);
+}
+
+void rl::Object::draw() const
+{
+	// Draw 3d model with texture
+	DrawModel(*m_model, m_rlModel.position, m_rlModel.scale, WHITE);
+}
+
+rl::Model rl::Object::rlModel() const
+{
+	return m_rlModel;
+}
+
+std::shared_ptr<::Model> rl::Object::model() const
+{
+	return m_model;
 }
 
 Vector6f rl::Object::rigidBody(Vector6f &tau, float dt)
@@ -50,10 +84,25 @@ Vector6f rl::Object::rigidBody(Vector6f &tau, float dt)
 	return nu;
 }
 
-
-rl::Quaternion rl::Object::rotation() const
+std::pair<Eigen::Vector3f, rl::Quaternion> rl::Object::kinematics(const Vector6f &nu, float dt)
 {
-	return rl::Quaternion::fromRlRotMatrix(m_model->transform);
+	constexpr int L = 100;
+	Vector3f p;
+	rl::Quaternion omega_bar(nu[3], nu[4], nu[5], 0);
+
+	// Position
+	rl::Quaternion p_dot = m_quat.rotate(nu.head<3>());
+	p = p_dot.data().head<3>() * dt;
+
+	// Rotation
+	rl::Quaternion q_dot = 0.5 * (m_quat * omega_bar);
+	m_quat = m_quat + q_dot * dt;
+
+	/* std::println("transpose: {}, {}, {}, {}", transpose[0], transpose[1], transpose[2], transpose[3]); */
+	m_quat += L * (1 - m_quat.ctranspose().dot(m_quat)) * m_quat;
+	m_quat.normalize();
+
+	return { p, m_quat };
 }
 
 void rl::Object::transform(const rl::Quaternion &quat)
@@ -65,22 +114,6 @@ void rl::Object::move(const Eigen::Vector3f &position)
 {
 	::Vector3 p = { position[0], position[1], position[2] };
 	m_rlModel.position = Vector3Add(m_rlModel.position, p);
-}
-
-void rl::Object::draw() const
-{
-	// Draw 3d model with texture
-	DrawModel(*m_model, m_rlModel.position, m_rlModel.scale, WHITE);
-}
-
-rl::Model rl::Object::rlModel() const
-{
-	return m_rlModel;
-}
-
-std::shared_ptr<::Model> rl::Object::model() const
-{
-	return m_model;
 }
 
 void rl::Object::forceStop()

@@ -15,11 +15,5 @@ public:
 	Plane(const rl::Model& model);
 	~Plane();
 
-	Vector6f getTorque();
-	std::pair<Eigen::Vector3f, rl::Quaternion> kinematics(const Vector6f &nu, float dt);
-
-	void update(float dt) override;
-
-private:
-	rl::Quaternion m_quat;
+	Vector6f getTorque() override;
 };

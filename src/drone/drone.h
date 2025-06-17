@@ -16,10 +16,4 @@ public:
 	~Drone();
 
 	Vector6f getTorque();
-	std::pair<Vector3f, rl::Quaternion> kinematics(const Vector6f &nu, float dt);
-
-	void update(float dt) override;
-
-private:
-	rl::Quaternion m_quat;
 };
