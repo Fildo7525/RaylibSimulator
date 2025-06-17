@@ -23,6 +23,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 add_definitions(-DPLANE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/plane.json")
 add_definitions(-DDRONE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/drone.json")
+add_definitions(-DSPACESHIP_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/spaceship.json")
 
 find_package(raylib 3.0 REQUIRED)
 find_package(Eigen3 3.4 REQUIRED)
