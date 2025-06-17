@@ -21,6 +21,4 @@ target_link_libraries(
 	drone_lib
 PUBLIC
 	object_lib
-	quat_lib
-	tbb
 )
