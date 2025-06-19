@@ -1,5 +1,6 @@
 {
 	"modelPath": "../resources/model/drone_body.obj",
+	"texturePath": "../resources/model/drone_body.mtl",
 	"position": [30, 0, 0],
 	"rotation": [-1.5707963267948966, 0, 0],
 	"scale": 10,

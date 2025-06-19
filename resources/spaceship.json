@@ -1,7 +1,7 @@
 {
 	"modelPath": "../resources/model/dragon_spaceship.obj",
-	"texturePath": "../resources/texture/plane_diffuse.png",
-	"position": [30, 0, 0],
+	"texturePath": "../resources/model/dragon_spaceship.mtl",
+	"position": [-30, 0, 0],
 	"rotation": [0 , 3.141592, 0],
 	"scale": 1,
 	"mass": 4,
