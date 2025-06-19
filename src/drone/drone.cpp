@@ -55,10 +55,10 @@ Vector6f Drone::getTorque()
 		auto &t = m_tau[i];
 		if (std::abs(t) < 0.01f) t = 0;
 		else if (i < 3) {
-			m_tau *= 0.99;
+			t *= 0.99;
 			t = std::clamp(t, m_rlModel.thrust.x, m_rlModel.thrust.y);
 		} else {
-			m_tau *= 0.96;
+			t *= 0.96;
 			t = std::clamp(t, m_rlModel.moment.x, m_rlModel.moment.y);
 		}
 	}
