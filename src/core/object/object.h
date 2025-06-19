@@ -9,7 +9,6 @@
 #include "quaternion.h"
 
 using Matrix6f = Eigen::Matrix<float, 6, 6>;
-using Matrix3f = Eigen::Matrix<float, 3, 3>;
 
 namespace rl
 {

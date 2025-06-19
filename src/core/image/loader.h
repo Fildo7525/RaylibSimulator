@@ -5,10 +5,12 @@
 #include <raylib.h>
 #include <string>
 #include <map>
+#include <Eigen/Dense>
 
 namespace rl
 {
 
+using Matrix3f = Eigen::Matrix<float, 3, 3>;
 using Path = std::filesystem::path;
 
 struct Model
@@ -58,6 +60,7 @@ struct Model
 	Vector2 thrust; // Min and max thrust
 	float dMoment;
 	Vector2 moment; // Min and max thrust
+	Matrix3f inertia;
 };
 
 class ImageLoader

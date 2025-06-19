@@ -54,6 +54,22 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 		config.texturePath = jsonConfig.value("texturePath", "model.png");
 	}
 
+	if (jsonConfig.contains("inertia")) {
+		std::array<float, 9> inertiaValues = jsonConfig.value("inertia", std::array<float, 9>{
+			1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f
+		});
+
+		std::println("inertia matrix: {}", inertiaValues);
+
+		config.inertia = Matrix3f{
+			{ inertiaValues[0], inertiaValues[1], inertiaValues[2] },
+			{ inertiaValues[3], inertiaValues[4], inertiaValues[5] },
+			{ inertiaValues[6], inertiaValues[7], inertiaValues[8] }
+		};
+	}
+
 	std::println("Loaded configuration: modelPath={}\n texturePath={}\n position=({:.2f}, {:.2f}, {:.2f})\n "
 		"rotation=({:.2f}, {:.2f}, {:.2f})\n scale={:.2f}\n mass={:.2f}\n camera.position=({:.2f}, {:.2f}, {:.2f})\n "
 		"camera.rotation=({:.2f}, {:.2f}, {:.2f})\n camera.fovY={:.2f}\n thrust={:.2f}\n moment={:.2f}",

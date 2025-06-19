@@ -22,4 +22,5 @@ target_link_libraries(
 PUBLIC
 	raylib
 	nlohmann_json::nlohmann_json
+	Eigen3::Eigen
 )

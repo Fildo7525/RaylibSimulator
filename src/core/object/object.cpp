@@ -14,7 +14,7 @@ rl::Object::Object(const rl::Model &model)
 	std::println("Model path {}", m_rlModel.modelPath);
 	std::println("Texture path {}", m_rlModel.texturePath);
 
-	m_inertiaMatrix.diagonal() << model.mass*2/6, model.mass*2/6, model.mass*2/6;
+	m_inertiaMatrix = m_rlModel.inertia;
 
 	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
