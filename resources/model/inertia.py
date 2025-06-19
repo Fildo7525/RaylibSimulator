@@ -26,7 +26,9 @@ if not combined_mesh.is_watertight:
 print(f"Combined Mesh Volume: {combined_mesh.volume}")
 print(f"Combined Mesh Center of Mass: {combined_mesh.center_mass}")
 print("Combined Mesh Inertia Tensor:")
-print(combined_mesh.moment_inertia)
+# print(combined_mesh.moment_inertia)
+inertia_tensor = np.array(combined_mesh.moment_inertia).flatten()
+print(inertia_tensor)
 
 # To get the inertia tensor for a specific mass (e.g., 5.0 units):
 mass = 6_390
