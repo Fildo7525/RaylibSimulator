@@ -48,5 +48,6 @@ PUBLIC
 	app_lib
 	drone_lib
 	plane_lib
+	spaceship_lib
 )
 

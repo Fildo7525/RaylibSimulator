@@ -3,17 +3,17 @@
 #include "object.h"
 #include "quaternion.h"
 
-class Plane
+class Spaceship
 	: public rl::Object
 {
 public:
 	static rl::Object::Ptr create(const rl::Model& model)
 	{
-		return std::make_shared<Plane>(model);
+		return std::make_shared<Spaceship>(model);
 	}
 
-	Plane(const rl::Model& model);
-	~Plane();
+	Spaceship(const rl::Model& model);
+	~Spaceship();
 
 	Vector6f getTorque() override;
 };

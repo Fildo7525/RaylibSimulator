@@ -1,41 +1,39 @@
-#include "plane.h"
+#include "spaceship.h"
 #include "quaternion.h"
 
 #include <algorithm>
-#include <execution>
-#include <iostream>
 #include <raylib.h>
 #include <raymath.h>
 
-Plane::Plane(const rl::Model& model)
+Spaceship::Spaceship(const rl::Model& model)
 	: rl::Object(model)
 {
 }
 
-Plane::~Plane()
+Spaceship::~Spaceship()
 {
 }
 
-Vector6f Plane::getTorque()
+Vector6f Spaceship::getTorque()
 {
 	const float &dTau = m_rlModel.dThrust;
 	const float &dM = m_rlModel.dMoment;
 	static Vector6f m_tau{ 0, 0, 0, 0, 0, 0 };
 
-	if (IsKeyDown(KEY_LEFT)) m_tau[0] += dTau;
-	else if (IsKeyDown(KEY_RIGHT)) m_tau[0] -= dTau;
+	if (IsKeyDown(KEY_LEFT)) m_tau[0] -= dTau;
+	else if (IsKeyDown(KEY_RIGHT)) m_tau[0] += dTau;
 
-	if (IsKeyDown(KEY_UP)) m_tau[2] += dTau;
-	else if (IsKeyDown(KEY_DOWN)) m_tau[2] -= dTau;
+	if (IsKeyDown(KEY_UP)) m_tau[2] -= dTau;
+	else if (IsKeyDown(KEY_DOWN)) m_tau[2] += dTau;
 
-	if (IsKeyDown(KEY_W)) m_tau[3] += dM;
-	else if (IsKeyDown(KEY_S)) m_tau[3] -= dM;
+	if (IsKeyDown(KEY_W)) m_tau[3] -= dM;
+	else if (IsKeyDown(KEY_S)) m_tau[3] += dM;
 
 	if (IsKeyDown(KEY_Q)) m_tau[4] += dM;
 	else if (IsKeyDown(KEY_E)) m_tau[4] -= dM;
 
-	if (IsKeyDown(KEY_A)) m_tau[5] -= dM;
-	else if (IsKeyDown(KEY_D)) m_tau[5] += dM;
+	if (IsKeyDown(KEY_A)) m_tau[5] += dM;
+	else if (IsKeyDown(KEY_D)) m_tau[5] -= dM;
 
 	// if (IsKeyDown(KEY_MINUS))
 	// 	m_rlModel.scale -= 0.01f;
@@ -53,10 +51,10 @@ Vector6f Plane::getTorque()
 		auto &t = m_tau[i];
 		if (std::abs(t) < 0.01f) t = 0;
 		else if (i < 3) {
-			m_tau *= 0.99;
+			t *= 0.99;
 			t = std::clamp(t, m_rlModel.thrust.x, m_rlModel.thrust.y);
 		} else {
-			m_tau *= 0.96;
+			t *= 0.96;
 			t = std::clamp(t, m_rlModel.moment.x, m_rlModel.moment.y);
 		}
 	}
