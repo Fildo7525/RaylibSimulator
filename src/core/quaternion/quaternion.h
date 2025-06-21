@@ -17,6 +17,11 @@ namespace rl
 
 Matrix3f skewMarix(const Vector3f &v);
 
+/**
+ * @class Quaternion
+ * @brief Represents a quaternion for 3D rotations and transformations.
+ *
+ */
 class Quaternion
 {
 	friend Quaternion operator+(const Quaternion &lhs, const Quaternion &rhs);

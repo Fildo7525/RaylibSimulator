@@ -13,6 +13,13 @@ namespace rl
 using Matrix3f = Eigen::Matrix<float, 3, 3>;
 using Path = std::filesystem::path;
 
+/**
+ * @class Model
+ * @brief Represents a 3D model with associated properties such as position, rotation, scale, mass, and camera settings.
+ *
+ * These settings are used to define the model's behavior in a 3D space, including its physics properties and camera
+ * perspective. The settings can be loaded from a configuration file, allowing for flexible model definitions.
+ */
 struct Model
 {
 	struct Camera {
@@ -47,6 +54,12 @@ struct Model
 	{
 	}
 
+	/**
+	 * @brief Loads a model configuration from a file.
+	 *
+	 * @param config std::filesystem::path to the configuration file containing model settings.
+	 * @return Model A Model object initialized with the settings from the file.
+	 */
 	static Model fromFile(const rl::Path &config);
 
 	std::string modelPath;
@@ -63,12 +76,32 @@ struct Model
 	Matrix3f inertia;
 };
 
+/**
+ * @class ImageLoader
+ * @brief Singleton class for loading and managing 3D models and their textures.
+ */
 class ImageLoader
 {
 public:
+	/**
+	 * @brief Returns the singleton instance of ImageLoader.
+	 *
+	 * @return ImageLoader& Reference to the singleton instance.
+	 */
 	static ImageLoader &instance();
 
+	/**
+	 * @brief Loads a 3D model from the given rl::Model configuration.
+	 *
+	 * @param model The rl::Model configuration containing model properties such as path, texture, position, rotation, scale,
+	 * and mass.
+	 */
 	std::shared_ptr<::Model> loadModel(const rl::Model &model);
+	/**
+	 * @brief Unloads a 3D model from the loader.
+	 *
+	 * @param model The rl::Model configuration of the model to be unloaded.
+	 */
 	void forceUnload(const rl::Model &model);
 
 	~ImageLoader();
