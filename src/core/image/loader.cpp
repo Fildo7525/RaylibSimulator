@@ -61,8 +61,6 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 			0.0f, 0.0f, 1.0f
 		});
 
-		std::println("inertia matrix: {}", inertiaValues);
-
 		config.inertia = Matrix3f{
 			{ inertiaValues[0], inertiaValues[1], inertiaValues[2] },
 			{ inertiaValues[3], inertiaValues[4], inertiaValues[5] },
