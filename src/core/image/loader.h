@@ -74,6 +74,11 @@ public:
 	~ImageLoader();
 
 private:
+	ImageLoader() = default;
+	ImageLoader(const ImageLoader &) = delete;
+	ImageLoader &operator=(const ImageLoader &) = delete;
+
+private:
 	std::map<size_t, std::shared_ptr<::Model>> m_images;
 };
 
