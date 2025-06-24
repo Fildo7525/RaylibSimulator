@@ -8,7 +8,7 @@
 #include <raymath.h>
 
 Drone::Drone(const rl::Model& model)
-	: rl::Object(model)
+	: rl::MovableObject(model)
 {
 	std::cout << "Model rotation: " << rl::Quaternion::fromEuler(model.rotation).toEuler() << std::endl;
 }

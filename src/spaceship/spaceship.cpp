@@ -6,7 +6,7 @@
 #include <raymath.h>
 
 Spaceship::Spaceship(const rl::Model& model)
-	: rl::Object(model)
+	: rl::MovableObject(model)
 {
 }
 

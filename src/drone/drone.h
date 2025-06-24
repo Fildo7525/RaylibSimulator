@@ -4,7 +4,7 @@
 #include "quaternion.h"
 
 class Drone
-	: public rl::Object
+	: public rl::MovableObject
 {
 public:
 	static rl::Object::Ptr create(const rl::Model& model)

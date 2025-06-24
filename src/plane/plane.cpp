@@ -8,7 +8,7 @@
 #include <raymath.h>
 
 Plane::Plane(const rl::Model& model)
-	: rl::Object(model)
+	: rl::MovableObject(model)
 {
 }
 
