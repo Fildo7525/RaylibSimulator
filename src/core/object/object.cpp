@@ -5,20 +5,9 @@
 rl::Object::Object(const rl::Model &model)
 	: m_rlModel(model)
 	, m_model(nullptr)
-	, m_invMrb(Matrix6f::Zero())
-	, m_inertiaMatrix(Matrix3f::Zero())
-	, m_feedbackTau(Vector6f::Zero())
-	, m_tau(Vector6f::Zero())
-	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
 	std::println("Model path {}", m_rlModel.modelPath);
 	std::println("Texture path {}", m_rlModel.texturePath);
-
-	m_inertiaMatrix = m_rlModel.inertia;
-
-	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
-	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
-	m_invMrb = m_invMrb.inverse();
 }
 
 rl::Object::~Object()
@@ -29,18 +18,6 @@ rl::Object::~Object()
 void rl::Object::loadModel()
 {
 	m_model = rl::ImageLoader::instance().loadModel(m_rlModel);
-}
-
-void rl::Object::update(float dt)
-{
-	auto tau = getTorque();
-	/* std::cout << "Torque: " << tau << std::endl; */
-	auto nu = rigidBody(tau, dt);
-	auto [p, q] = kinematics(nu, dt);
-
-	// Tranformation matrix for rotations
-	transform(q);
-	move(p);
 }
 
 rl::Quaternion rl::Object::rotation() const
@@ -64,7 +41,34 @@ std::shared_ptr<::Model> rl::Object::model() const
 	return m_model;
 }
 
-Vector6f rl::Object::rigidBody(Vector6f &tau, float dt)
+rl::MovableObject::MovableObject(const rl::Model &model)
+	: rl::Object(model)
+	, m_invMrb(Matrix6f::Zero())
+	, m_inertiaMatrix(Matrix3f::Zero())
+	, m_feedbackTau(Vector6f::Zero())
+	, m_tau(Vector6f::Zero())
+	, m_quat(rl::Quaternion::fromEuler(model.rotation))
+{
+	m_inertiaMatrix = m_rlModel.inertia;
+
+	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
+	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
+	m_invMrb = m_invMrb.inverse();
+}
+
+void rl::MovableObject::update(float dt)
+{
+	auto tau = getTorque();
+	/* std::cout << "Torque: " << tau << std::endl; */
+	auto nu = rigidBody(tau, dt);
+	auto [p, q] = kinematics(nu, dt);
+
+	// Tranformation matrix for rotations
+	transform(q);
+	move(p);
+}
+
+Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 {
 	tau -= m_feedbackTau;
 
@@ -84,7 +88,7 @@ Vector6f rl::Object::rigidBody(Vector6f &tau, float dt)
 	return nu;
 }
 
-std::pair<Eigen::Vector3f, rl::Quaternion> rl::Object::kinematics(const Vector6f &nu, float dt)
+std::pair<Eigen::Vector3f, rl::Quaternion> rl::MovableObject::kinematics(const Vector6f &nu, float dt)
 {
 	constexpr int L = 100;
 	Vector3f p;
@@ -105,18 +109,18 @@ std::pair<Eigen::Vector3f, rl::Quaternion> rl::Object::kinematics(const Vector6f
 	return { p, m_quat };
 }
 
-void rl::Object::transform(const rl::Quaternion &quat)
+void rl::MovableObject::transform(const rl::Quaternion &quat)
 {
 	m_model->transform = quat.toRlRotMatrix();
 }
 
-void rl::Object::move(const Eigen::Vector3f &position)
+void rl::MovableObject::move(const Eigen::Vector3f &position)
 {
 	::Vector3 p = { position[0], position[1], position[2] };
 	m_rlModel.position = Vector3Add(m_rlModel.position, p);
 }
 
-void rl::Object::forceStop()
+void rl::MovableObject::forceStop()
 {
 	m_rlModel.position.y = 0.0f;
 	m_feedbackTau = Vector6f::Zero();

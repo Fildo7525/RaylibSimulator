@@ -84,24 +84,12 @@ public:
 	 * @brief Loads the model for the object.
 	 */
 	void loadModel();
-	/**
-	 * @brief Updates the object state based on the elapsed time.
-	 *
-	 * @param dt Elapsed time since the last update in seconds.
-	 */
-	void update(float dt);
-
-	/**
-	 * @brief Virtual method to get the torque applied to the object.
-	 *
-	 * @return Vector6f The torque vector applied to the object.
-	 */
-	virtual Vector6f getTorque() = 0;
 
 	/**
 	 * @brief Returns the current rotation of the object represented as a quaternion.
 	 */
 	rl::Quaternion rotation() const;
+
 	/**
 	 * @brief Draws the object in the 3D space.
 	 */
@@ -115,6 +103,34 @@ public:
 	 * @brief Returns the raylib model associated with this object.
 	 */
 	std::shared_ptr<::Model> model() const;
+
+
+protected:
+	rl::Model m_rlModel;
+	std::shared_ptr<::Model> m_model;
+};
+
+
+class MovableObject
+	: public Object
+{
+public:
+	using Ptr = std::shared_ptr<MovableObject>;
+	explicit MovableObject(const rl::Model &model);
+
+	/**
+	 * @brief Updates the object state based on the elapsed time.
+	 *
+	 * @param dt Elapsed time since the last update in seconds.
+	 */
+	void update(float dt);
+
+	/**
+	 * @brief Virtual method to get the torque applied to the object.
+	 *
+	 * @return Vector6f The torque vector applied to the object.
+	 */
+	virtual Vector6f getTorque() = 0;
 
 protected:
 	/**
@@ -146,7 +162,6 @@ protected:
 	 */
 	void move(const Eigen::Vector3f &position);
 
-
 	/* TODO:
 	 * 1. Add collision check of the model and another object
 	 **/
@@ -156,8 +171,6 @@ protected:
 	virtual void forceStop();
 
 protected:
-	rl::Model m_rlModel;
-	std::shared_ptr<::Model> m_model;
 	Matrix6f m_invMrb;
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;

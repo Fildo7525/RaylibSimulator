@@ -98,7 +98,10 @@ void Application::run()
 
 			float dt = GetFrameTime();
 			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this, &dt](Object::Ptr object) {
-				object->update(dt);
+				MovableObject::Ptr movable = std::dynamic_pointer_cast<MovableObject, rl::Object>(object);
+				if (movable) {
+					movable->update(dt);
+				}
 			});
 
 			std::for_each(m_objects.begin(), m_objects.end(), [this, &dt](Object::Ptr object) {
