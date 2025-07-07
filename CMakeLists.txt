@@ -3,6 +3,15 @@ project(first VERSION 3.31.2)
 
 include(FetchContent)
 
+set(RAYLIB_VERSION 5.5)
+
+FetchContent_Declare(
+	rib
+	DOWNLOAD_EXTRACT_TIMESTAMP OFF
+	URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+	FIND_PACKAGE_ARGS
+)
+
 FetchContent_Declare(
 	json
 	GIT_REPOSITORY https://github.com/nlohmann/json.git
@@ -11,6 +20,7 @@ FetchContent_Declare(
 	SYSTEM
 )
 
+FetchContent_MakeAvailable(rib)
 FetchContent_MakeAvailable(json)
 
 set(CMAKE_CXX_COMPILER /usr/bin/g++-14)
@@ -25,7 +35,6 @@ add_definitions(-DPLANE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/plane
 add_definitions(-DDRONE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/drone.json")
 add_definitions(-DSPACESHIP_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/spaceship.json")
 
-find_package(raylib 5.5 REQUIRED)
 find_package(Eigen3 3.4 REQUIRED)
 
 set(SOURCES
