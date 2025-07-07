@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31.2)
-project(first VERSION 3.31.2)
+project(simulator VERSION 3.31.2)
 
 include(FetchContent)
 
