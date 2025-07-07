@@ -4,4 +4,4 @@ compile
 .cache
 
 resources/model/.venv
-resources/model/.null-*
+.null*
