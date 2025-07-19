@@ -4,6 +4,7 @@ project(simulator VERSION 3.31.2)
 include(FetchContent)
 
 set(RAYLIB_VERSION 5.5)
+set(CMAKE_BUILD_TYPE Debug)
 
 FetchContent_Declare(
 	rib
@@ -28,7 +29,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE Debug)
 
 
 add_definitions(-DPLANE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/plane.json")
