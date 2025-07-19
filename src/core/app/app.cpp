@@ -7,6 +7,8 @@
 #include <rcamera.h>
 #include <print>
 
+#include "MovableObject.h"
+
 constexpr Vector3 CAMERA_DEFAULT_POSITION{ 0.0f, 5.0f, -15.0f };
 
 namespace rl
@@ -98,7 +100,7 @@ void Application::run()
 
 			float dt = GetFrameTime();
 			std::for_each(std::execution::par, m_objects.begin(), m_objects.end(), [this, &dt](Object::Ptr object) {
-				MovableObject::Ptr movable = std::dynamic_pointer_cast<MovableObject, rl::Object>(object);
+				rl::MovableObject::Ptr movable = std::dynamic_pointer_cast<rl::MovableObject, rl::Object>(object);
 				if (movable) {
 					movable->update(dt);
 				}

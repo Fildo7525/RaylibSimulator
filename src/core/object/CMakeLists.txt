@@ -1,9 +1,11 @@
 set(SRC
 	object.cpp
+	MovableObject.cpp
 )
 
 set(HEADERS
 	object.h
+	MovableObject.h
 )
 
 add_library(object_lib
