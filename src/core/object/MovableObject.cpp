@@ -81,9 +81,15 @@ void rl::MovableObject::move(const Eigen::Vector3f &position)
 	m_rlModel.position = Vector3Add(m_rlModel.position, p);
 }
 
-void rl::MovableObject::forceStop()
+void rl::MovableObject::forceStop(const Vector3 &pos, const rl::Quaternion &q)
 {
-	m_rlModel.position.y = 0.0f;
-	m_feedbackTau = Vector6f::Zero();
+	m_quat = q;
 	m_tau = Vector6f::Zero();
+	m_feedbackTau = Vector6f::Zero();
+	m_rlModel.position = pos;
+}
+
+void rl::MovableObject::forceStop(const Vector3 &pos, const Vector3 &rot)
+{
+	forceStop(pos, rl::Quaternion::fromEuler(rot));
 }

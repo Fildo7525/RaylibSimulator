@@ -63,8 +63,22 @@ protected:
 	 **/
 	/**
 	 * @brief Forces the object to stop immediately and reset its state.
+	 *
+	 * This function is used inside of the movable object for easy implementation. To specify the position and rotation in
+	 * Euler angles @see forceStop
+	 *
+	 * @param pos The position to which the object should be moved when stopping.
+	 * @param q The quaternion represetation of rotation in which the object should remain.
 	 */
-	virtual void forceStop();
+	virtual void forceStop(const Vector3 &pos, const rl::Quaternion &q);
+
+	/**
+	 * @brief Forces the object to stop immediately and reset its state.
+	 *
+	 * @param pos The position to which the object should be moved when stopping.
+	 * @param rot The Euler angle rotation in which the object should remain.
+	 */
+	virtual void forceStop(const Vector3 &pos = Vector3{0, 0, 0}, const Vector3 &rot = Vector3{0, 0, 0});
 
 protected:
 	Matrix6f m_invMrb;
