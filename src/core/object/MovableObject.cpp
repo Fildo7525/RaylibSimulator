@@ -44,6 +44,9 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 		m_nu = Vector6f::Zero();
 	}
 
+	// Drag force
+	tau -= 0.5 * AIR_DENSITY_25CELSIUS * m_nu.cwiseProduct(m_nu).cwiseProduct(m_nu.cwiseSign());
+
 	Vector6f nu_dot = m_invMrb * tau;
 	m_nu += nu_dot * dt;
 

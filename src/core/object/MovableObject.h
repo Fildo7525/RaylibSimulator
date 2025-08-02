@@ -4,6 +4,7 @@
 
 using Matrix6f = Eigen::Matrix<float, 6, 6>;
 constexpr float EARTH_GRAVITY_CONSTANT = 9.81f; // m/s^2, approximate value for Earth gravity
+constexpr float AIR_DENSITY_25CELSIUS = 1.1839f; // kg/m^3, approximate value for air density at 25 degrees Celsius
 
 namespace rl
 {
