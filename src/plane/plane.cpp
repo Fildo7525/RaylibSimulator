@@ -20,10 +20,12 @@ Vector6f Plane::getTorque()
 {
 	const float &dTau = m_rlModel.dThrust;
 	const float &dM = m_rlModel.dMoment;
-	static Vector6f m_tau{ 0, 0, 0, 0, 0, 0 };
 
 	if (IsKeyDown(KEY_LEFT)) m_tau[0] += dTau;
 	else if (IsKeyDown(KEY_RIGHT)) m_tau[0] -= dTau;
+
+	if (IsKeyDown(KEY_HOME)) m_tau[1] += dTau;
+	else if (IsKeyDown(KEY_END)) m_tau[1] -= dTau;
 
 	if (IsKeyDown(KEY_UP)) m_tau[2] += dTau;
 	else if (IsKeyDown(KEY_DOWN)) m_tau[2] -= dTau;
@@ -43,10 +45,7 @@ Vector6f Plane::getTorque()
 	// 	m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
-		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
-		m_tau = Vector6f::Zero();
-		m_feedbackTau = Vector6f::Zero();
-		m_rlModel.position = Vector3{0, 0, 0};
+		forceStop();
 	}
 
 	for (int i = 0; i < m_tau.size(); ++i) {
