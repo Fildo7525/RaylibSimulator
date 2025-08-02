@@ -3,6 +3,7 @@
 	"texturePath": "../resources/model/drone_body.mtl",
 	"position": [30, 0, 0],
 	"rotation": [-1.5707963267948966, 0, 0],
+	"gravity": [0, 0, -1],
 	"scale": 10,
 	"mass": 4,
 	"thrust": [-1000, 1000],

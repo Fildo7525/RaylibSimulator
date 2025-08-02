@@ -3,6 +3,7 @@
 	"texturePath": "../resources/model/dragon_spaceship.mtl",
 	"position": [-30, 0, 0],
 	"rotation": [0 , 3.141592, 0],
+	"gravity": [0, 0, -1],
 	"scale": 1,
 	"mass": 6000,
 	"thrust": [-1000000000000, 1000000000000],

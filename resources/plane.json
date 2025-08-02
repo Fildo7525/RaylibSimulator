@@ -3,6 +3,7 @@
 	"texturePath": "../resources/texture/plane_diffuse.png",
 	"position": [0, 0, 0],
 	"rotation": [0, 0, 0],
+	"gravity": [0, 0, -1],
 	"scale": 0.1,
 	"mass": 1000,
 	"thrust": [-10000000000, 10000000000],
