@@ -16,6 +16,7 @@ rl::MovableObject::MovableObject(const rl::Model &model)
 	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
 	m_invMrb = m_invMrb.inverse();
+	m_rlModel.gravity *= m_rlModel.mass * EARTH_GRAVITY_CONSTANT;
 }
 
 void rl::MovableObject::update(float dt)
@@ -33,6 +34,16 @@ void rl::MovableObject::update(float dt)
 Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 {
 	tau -= m_feedbackTau;
+
+	// Gravity
+	if (m_rlModel.position.y >= 0.f) {
+		const rl::Quaternion F_be = m_quat.cconjugate().rotate(m_rlModel.gravity);
+		tau.head<3>() += F_be.toEigVector().head<3>();
+	}
+	else {
+		m_rlModel.position.y = 0.0f;
+		m_nu = Vector6f::Zero();
+	}
 
 	Vector6f nu_dot = m_invMrb * tau;
 	m_nu += nu_dot * dt;

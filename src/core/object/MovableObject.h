@@ -3,6 +3,7 @@
 #include "object.h"
 
 using Matrix6f = Eigen::Matrix<float, 6, 6>;
+constexpr float EARTH_GRAVITY_CONSTANT = 9.81f; // m/s^2, approximate value for Earth gravity
 
 namespace rl
 {
