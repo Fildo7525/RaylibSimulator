@@ -129,6 +129,32 @@ struct std::formatter<Vector3f> {
 };
 
 template <>
+struct std::formatter<Eigen::Matrix<float, 6, 1>> {
+	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
+	template <typename FormatContext>
+	auto format(const Eigen::Matrix<float, 6, 1>& p, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "[ {} {} {} {} {} {} ]", p(1), p(2), p(2), p(3), p(4), p(5));
+	}
+};
+
+template <>
+struct std::formatter<Eigen::Matrix<float, 6, 6>> {
+	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+
+	template <typename FormatContext>
+	auto format(const Eigen::Matrix<float, 6, 6>& p, FormatContext& ctx) const {
+		return std::format_to(ctx.out(), "[ {} {} {} {} {} {};\n  {} {} {} {} {} {};\n  {} {} {} {} {} {};\n  {} {} {} {} {} {};\n  {} {} {} {} {} {};\n  {} {} {} {} {} {} ]",
+			p(0, 0), p(0, 1), p(0, 2), p(0, 3), p(0, 4), p(0, 5),
+			p(1, 0), p(1, 1), p(1, 2), p(1, 3), p(1, 4), p(1, 5),
+			p(2, 0), p(2, 1), p(2, 2), p(2, 3), p(2, 4), p(2, 5),
+			p(3, 0), p(3, 1), p(3, 2), p(3, 3), p(3, 4), p(3, 5),
+			p(4, 0), p(4, 1), p(4, 2), p(4, 3), p(4, 4), p(4, 5),
+			p(5, 0), p(5, 1), p(5, 2), p(5, 3), p(5, 4), p(5, 5));
+	}
+};
+
+template <>
 struct std::formatter<Vector3> {
 	constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
 
