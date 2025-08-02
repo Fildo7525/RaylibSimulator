@@ -85,7 +85,6 @@ protected:
 	Matrix6f m_invMrb;
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;
-	Vector6f m_tau;
 	Vector6f m_nu;
 	rl::Quaternion m_quat;
 };

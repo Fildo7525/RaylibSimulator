@@ -7,7 +7,6 @@ rl::MovableObject::MovableObject(const rl::Model &model)
 	, m_invMrb(Matrix6f::Zero())
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
-	, m_tau(Vector6f::Zero())
 	, m_nu(Vector6f::Zero())
 	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
@@ -96,7 +95,6 @@ void rl::MovableObject::move(const Eigen::Vector3f &position)
 void rl::MovableObject::forceStop(const Vector3 &pos, const rl::Quaternion &q)
 {
 	m_quat = q;
-	m_tau = Vector6f::Zero();
 	m_feedbackTau = Vector6f::Zero();
 	m_nu = Vector6f::Zero();
 	m_rlModel.position = pos;
