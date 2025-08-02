@@ -46,6 +46,8 @@ public:
 		std::pair<int, int> windowPosition;
 		// Camera to be used in the application.
 		::Camera *camera = nullptr;
+		// First-person view mode flag.
+		bool fpv = true;
 	};
 
 	/**
