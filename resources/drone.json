@@ -9,7 +9,7 @@
 	"thrust": [-1000, 1000],
 	"dThrust": 60,
 	"moment": [-100, 100],
-	"dMoment": 2,
+	"dMoment": 1,
 	"camera": {
 		"offset": [0, 15, 5],
 		"up": [0, -1, 0],
