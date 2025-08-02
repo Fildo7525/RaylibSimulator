@@ -7,7 +7,7 @@ rl::MovableObject::MovableObject(const rl::Model &model)
 	, m_invMrb(Matrix6f::Zero())
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
-	, m_tau(Vector6f::Zero())
+	, m_nu(Vector6f::Zero())
 	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
 	m_inertiaMatrix = m_rlModel.inertia;
@@ -15,6 +15,7 @@ rl::MovableObject::MovableObject(const rl::Model &model)
 	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
 	m_invMrb = m_invMrb.inverse();
+	m_rlModel.gravity *= m_rlModel.mass * EARTH_GRAVITY_CONSTANT;
 }
 
 void rl::MovableObject::update(float dt)
@@ -33,11 +34,24 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 {
 	tau -= m_feedbackTau;
 
-	Vector6f nu_dot = m_invMrb * tau;
-	Vector6f nu = nu_dot * dt;
+	// Gravity
+	if (m_rlModel.position.y >= 0.f) {
+		const rl::Quaternion F_be = m_quat.cconjugate().rotate(m_rlModel.gravity);
+		tau.head<3>() += F_be.toEigVector().head<3>();
+	}
+	else {
+		m_rlModel.position.y = 0.0f;
+		m_nu = Vector6f::Zero();
+	}
 
-	Vector3f v = nu.head<3>();
-	Vector3f omega = nu.tail<3>();
+	// Drag force
+	tau -= 0.5 * AIR_DENSITY_25CELSIUS * m_nu.cwiseProduct(m_nu).cwiseProduct(m_nu.cwiseSign());
+
+	Vector6f nu_dot = m_invMrb * tau;
+	m_nu += nu_dot * dt;
+
+	Vector3f v = m_nu.head<3>();
+	Vector3f omega = m_nu.tail<3>();
 
 	auto tmp = m_inertiaMatrix * omega;
 
@@ -46,7 +60,7 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 	m_feedbackTau.head<3>() = pt1;
 	m_feedbackTau.tail<3>() = pt2;
 
-	return nu;
+	return m_nu;
 }
 
 std::pair<Eigen::Vector3f, rl::Quaternion> rl::MovableObject::kinematics(const Vector6f &nu, float dt)
@@ -81,9 +95,15 @@ void rl::MovableObject::move(const Eigen::Vector3f &position)
 	m_rlModel.position = Vector3Add(m_rlModel.position, p);
 }
 
-void rl::MovableObject::forceStop()
+void rl::MovableObject::forceStop(const Vector3 &pos, const rl::Quaternion &q)
 {
-	m_rlModel.position.y = 0.0f;
+	m_quat = q;
 	m_feedbackTau = Vector6f::Zero();
-	m_tau = Vector6f::Zero();
+	m_nu = Vector6f::Zero();
+	m_rlModel.position = pos;
+}
+
+void rl::MovableObject::forceStop(const Vector3 &pos, const Vector3 &rot)
+{
+	forceStop(pos, rl::Quaternion::fromEuler(rot));
 }

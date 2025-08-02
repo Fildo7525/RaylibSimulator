@@ -34,6 +34,9 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 	read = jsonConfig.value("rotation", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
 	config.rotation = Vector3{ read[0], read[1], read[2] };
 
+	read = jsonConfig.value("gravity", std::array<float, 3>{ 0.0f, 0.0f, 1.0f });
+	config.gravity = Vector3{ read[1], read[2], read[0] };
+
 	// Camera configuration
 	read = jsonConfig.value("camera", json::object()).value("offset", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
 	config.camera.offset = Vector3{ read[0], read[1], read[2] };
@@ -68,16 +71,40 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 		};
 	}
 
-	std::println("Loaded configuration: modelPath={}\n texturePath={}\n position=({:.2f}, {:.2f}, {:.2f})\n "
-		"rotation=({:.2f}, {:.2f}, {:.2f})\n scale={:.2f}\n mass={:.2f}\n camera.position=({:.2f}, {:.2f}, {:.2f})\n "
-		"camera.rotation=({:.2f}, {:.2f}, {:.2f})\n camera.fovY={:.2f}\n thrust={:.2f}\n moment={:.2f}",
-		config.modelPath, config.texturePath,
+	std::println("Loaded configuration: \n"
+		"Model Path: {}\n"
+		"Texture Path: {}\n"
+		"Scale: {}\n"
+		"Mass: {}\n"
+		"Position: [{}, {}, {}]\n"
+		"Rotation: [{}, {}, {}]\n"
+		"Thurst: [{}, {}]\n"
+		"dThrust: {}\n"
+		"Moment: [{}, {}]\n"
+		"dMoment: {}\n"
+		"Gravity: [{}, {}, {}]\n"
+		"Camera Offset: [{}, {}, {}]\n"
+		"Camera Up: [{}, {}, {}]\n"
+		"Camera FOV: {}\n"
+		"Thrust Range: [{}, {}]\n"
+		"Moment Range: [{}, {}]\n",
+		config.modelPath,
+		config.texturePath,
+		config.scale,
+		config.mass,
 		config.position.x, config.position.y, config.position.z,
 		config.rotation.x, config.rotation.y, config.rotation.z,
-		config.scale, config.mass,
+		config.thrust.x, config.thrust.y,
+		config.dThrust,
+		config.moment.x, config.moment.y,
+		config.dMoment,
+		config.gravity.x, config.gravity.y, config.gravity.z,
 		config.camera.offset.x, config.camera.offset.y, config.camera.offset.z,
 		config.camera.up.x, config.camera.up.y, config.camera.up.z,
-		config.camera.fovY, config.dThrust, config.dMoment);
+		config.camera.fovY,
+		config.thrust.x, config.thrust.y,
+		config.moment.x, config.moment.y
+	);
 	return config;
 }
 
@@ -151,5 +178,6 @@ rl::ImageLoader::~ImageLoader()
 	for (auto& [hash, model] : m_images) {
 		UnloadTexture(model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture);
 		UnloadModel(*model);
+		m_images.erase(hash);
 	}
 }

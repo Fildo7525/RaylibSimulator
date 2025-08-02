@@ -86,13 +86,27 @@ void Application::run()
 			std::println("Current object index: {}", idx);
 		}
 
+		if (IsKeyPressed(KEY_V)) {
+			m_config.fpv = !m_config.fpv;
+			if (m_config.fpv) {
+				std::println("First-person view ENABLED");
+			} else {
+				std::println("First-person view DISABLED");
+				m_camera.position = Vector3{0.f, 0.f, 0.f};
+			}
+		}
+
 		BeginDrawing();
 			ClearBackground(RAYWHITE);
 
 			const auto &model = m_objects[idx]->rlModel();
 			m_camera.target = model.position + rotate(m_objects[idx], Vector3{0.0f, 1.0f, 0.0f});
-			m_camera.position = m_camera.target + rotate(m_objects[idx], model.camera.offset);
-			m_camera.up = rotate(m_objects[idx], model.camera.up);
+
+			if (m_config.fpv) {
+				m_camera.up = rotate(m_objects[idx], model.camera.up);
+				m_camera.position = m_camera.target + rotate(m_objects[idx], model.camera.offset);
+			}
+
 
 			BeginMode3D(m_camera);
 

@@ -42,6 +42,7 @@ struct Model
 	std::string texturePath;
 	Vector3 position;
 	Vector3 rotation;
+	Vector3 gravity;
 	float scale;
 	float mass;
 	Camera camera;

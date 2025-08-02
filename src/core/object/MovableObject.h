@@ -3,6 +3,8 @@
 #include "object.h"
 
 using Matrix6f = Eigen::Matrix<float, 6, 6>;
+constexpr float EARTH_GRAVITY_CONSTANT = 9.81f; // m/s^2, approximate value for Earth gravity
+constexpr float AIR_DENSITY_25CELSIUS = 1.1839f; // kg/m^3, approximate value for air density at 25 degrees Celsius
 
 namespace rl
 {
@@ -63,14 +65,28 @@ protected:
 	 **/
 	/**
 	 * @brief Forces the object to stop immediately and reset its state.
+	 *
+	 * This function is used inside of the movable object for easy implementation. To specify the position and rotation in
+	 * Euler angles @see forceStop
+	 *
+	 * @param pos The position to which the object should be moved when stopping.
+	 * @param q The quaternion represetation of rotation in which the object should remain.
 	 */
-	virtual void forceStop();
+	virtual void forceStop(const Vector3 &pos, const rl::Quaternion &q);
+
+	/**
+	 * @brief Forces the object to stop immediately and reset its state.
+	 *
+	 * @param pos The position to which the object should be moved when stopping.
+	 * @param rot The Euler angle rotation in which the object should remain.
+	 */
+	virtual void forceStop(const Vector3 &pos = Vector3{0, 0, 0}, const Vector3 &rot = Vector3{0, 0, 0});
 
 protected:
 	Matrix6f m_invMrb;
 	Matrix3f m_inertiaMatrix;
 	Vector6f m_feedbackTau;
-	Vector6f m_tau;
+	Vector6f m_nu;
 	rl::Quaternion m_quat;
 };
 
