@@ -154,5 +154,6 @@ rl::ImageLoader::~ImageLoader()
 	for (auto& [hash, model] : m_images) {
 		UnloadTexture(model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture);
 		UnloadModel(*model);
+		m_images.erase(hash);
 	}
 }
