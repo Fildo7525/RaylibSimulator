@@ -7,9 +7,9 @@
 	"scale": 10,
 	"mass": 4,
 	"thrust": [-1000, 1000],
-	"dThrust": 30,
+	"dThrust": 60,
 	"moment": [-100, 100],
-	"dMoment": 10,
+	"dMoment": 2,
 	"camera": {
 		"offset": [0, 15, 5],
 		"up": [0, -1, 0],
