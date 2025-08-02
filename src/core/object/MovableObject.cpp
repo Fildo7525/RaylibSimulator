@@ -8,6 +8,7 @@ rl::MovableObject::MovableObject(const rl::Model &model)
 	, m_inertiaMatrix(Matrix3f::Zero())
 	, m_feedbackTau(Vector6f::Zero())
 	, m_tau(Vector6f::Zero())
+	, m_nu(Vector6f::Zero())
 	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
 	m_inertiaMatrix = m_rlModel.inertia;
@@ -34,10 +35,10 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 	tau -= m_feedbackTau;
 
 	Vector6f nu_dot = m_invMrb * tau;
-	Vector6f nu = nu_dot * dt;
+	m_nu += nu_dot * dt;
 
-	Vector3f v = nu.head<3>();
-	Vector3f omega = nu.tail<3>();
+	Vector3f v = m_nu.head<3>();
+	Vector3f omega = m_nu.tail<3>();
 
 	auto tmp = m_inertiaMatrix * omega;
 
@@ -46,7 +47,7 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 	m_feedbackTau.head<3>() = pt1;
 	m_feedbackTau.tail<3>() = pt2;
 
-	return nu;
+	return m_nu;
 }
 
 std::pair<Eigen::Vector3f, rl::Quaternion> rl::MovableObject::kinematics(const Vector6f &nu, float dt)
@@ -86,6 +87,7 @@ void rl::MovableObject::forceStop(const Vector3 &pos, const rl::Quaternion &q)
 	m_quat = q;
 	m_tau = Vector6f::Zero();
 	m_feedbackTau = Vector6f::Zero();
+	m_nu = Vector6f::Zero();
 	m_rlModel.position = pos;
 }
 
