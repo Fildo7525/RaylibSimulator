@@ -35,11 +35,11 @@ Vector6f rl::MovableObject::rigidBody(Vector6f &tau, float dt)
 	tau -= m_feedbackTau;
 
 	// Gravity
-	if (m_rlModel.position.y >= 0.f) {
+	if (m_rlModel.position.y > 0.1f) {
 		const rl::Quaternion F_be = m_quat.cconjugate().rotate(m_rlModel.gravity);
 		tau.head<3>() += F_be.toEigVector().head<3>();
 	}
-	else {
+	else if (m_rlModel.position.y < 0.f) {
 		m_rlModel.position.y = 0.0f;
 		m_nu = Vector6f::Zero();
 	}
