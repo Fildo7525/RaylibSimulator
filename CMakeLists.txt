@@ -5,6 +5,7 @@ include(FetchContent)
 
 set(RAYLIB_VERSION 5.5)
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API OFF)
 
 FetchContent_Declare(
 	rib
