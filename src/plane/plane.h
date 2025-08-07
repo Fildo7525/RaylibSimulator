@@ -16,4 +16,7 @@ public:
 	~Plane();
 
 	Vector6f getTorque() override;
+
+private:
+	const float m_wingArea;
 };

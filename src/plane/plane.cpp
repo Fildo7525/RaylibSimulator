@@ -1,4 +1,5 @@
 #include "plane.h"
+#include "MovableObject.h"
 #include "quaternion.h"
 
 #include <algorithm>
@@ -7,8 +8,12 @@
 #include <raylib.h>
 #include <raymath.h>
 
+constexpr const float PLANE_WING_AREA = 1299.18f;
+constexpr const float LIFT_COEFFICIENT = 0.8f;
+
 Plane::Plane(const rl::Model& model)
 	: rl::MovableObject(model)
+	, m_wingArea(PLANE_WING_AREA * model.scale)
 {
 }
 
@@ -48,6 +53,13 @@ Vector6f Plane::getTorque()
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
 		forceStop();
 	}
+
+	const float lift = 0.5 * AIR_DENSITY_25CELSIUS * m_nu[2] * m_nu[2] * m_wingArea * LIFT_COEFFICIENT;
+	// std::print("\rNu: ({}, {}, {})\n", m_nu.x(), m_nu.y(), m_nu.z());
+	tau[1] += lift;
+	std::println("Lift: {}", lift);
+	std::println("Tau: ({}, {}, {})", tau[0], tau[1], tau[2]);
+	std::println("");
 
 	for (int i = 0; i < tau.size(); ++i) {
 		auto &t = tau[i];
