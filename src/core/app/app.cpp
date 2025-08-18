@@ -76,11 +76,6 @@ void Application::run()
 
 	while (!WindowShouldClose())
 	{
-		if (IsKeyDown(KEY_ESCAPE)) {
-			CloseWindow();
-			return;
-		}
-
 		if (IsKeyPressed(KEY_I)) {
 			idx = (idx + 1) % m_objects.size();
 			std::println("Current object index: {}", idx);
