@@ -12,7 +12,7 @@ public:
 		return std::make_shared<Plane>(model);
 	}
 
-	Plane(const rl::Model& model);
+	explicit Plane(const rl::Model& model);
 	~Plane();
 
 	Vector6f getTorque() override;
