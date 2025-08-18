@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <execution>
 #include <iostream>
+#include <print>
 #include <raylib.h>
 #include <raymath.h>
 
@@ -47,10 +48,8 @@ Vector6f Drone::getTorque()
 		m_rlModel.scale += 0.01f;
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
-		m_quat = rl::Quaternion::fromEuler(m_rlModel.rotation);
-		tau = Vector6f::Zero();
-		m_feedbackTau = Vector6f::Zero();
-		m_rlModel.position = Vector3{0, 0, 0};
+		std::println("Forcing the position {} and rotation {}", m_rlModel.position, m_rlModel.rotation);
+		forceStop(m_rlModel.position, m_rlModel.rotation);
 	}
 
 	for (int i = 0; i < tau.size(); ++i) {
