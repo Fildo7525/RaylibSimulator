@@ -67,7 +67,7 @@ protected:
 	 * @brief Forces the object to stop immediately and reset its state.
 	 *
 	 * This function is used inside of the movable object for easy implementation. To specify the position and rotation in
-	 * Euler angles @see forceStop
+	 * Euler angles @c forceStop
 	 *
 	 * @param pos The position to which the object should be moved when stopping.
 	 * @param q The quaternion represetation of rotation in which the object should remain.
