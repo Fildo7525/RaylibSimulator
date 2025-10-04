@@ -5,13 +5,11 @@
 rl::MovableObject::MovableObject(const rl::Model &model)
 	: rl::Object(model)
 	, m_invMrb(Matrix6f::Zero())
-	, m_inertiaMatrix(Matrix3f::Zero())
+	, m_inertiaMatrix(m_rlModel.inertia)
 	, m_feedbackTau(Vector6f::Zero())
 	, m_nu(Vector6f::Zero())
 	, m_quat(rl::Quaternion::fromEuler(model.rotation))
 {
-	m_inertiaMatrix = m_rlModel.inertia;
-
 	m_invMrb.block<3, 3>(0, 0) = Eigen::Matrix3f::Identity() * model.mass;
 	m_invMrb.block<3, 3>(3, 3) = m_inertiaMatrix;
 	m_invMrb = m_invMrb.inverse();
