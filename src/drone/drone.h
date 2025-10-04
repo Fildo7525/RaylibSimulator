@@ -12,8 +12,10 @@ public:
 		return std::make_shared<Drone>(model);
 	}
 
-	Drone(const rl::Model& model);
+	explicit Drone(const rl::Model& model);
 	~Drone();
 
 	Vector6f getTorque();
+	Vector6f getTorqueKeyboard();
+	Vector6f getTorqueGamepad();
 };
