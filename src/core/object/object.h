@@ -75,7 +75,7 @@ public:
 	 *
 	 * @param model The model to be used for the object.
 	 */
-	Object(const rl::Model &model);
+	explicit Object(const rl::Model &model);
 	virtual ~Object();
 
 	/**
