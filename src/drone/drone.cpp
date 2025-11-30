@@ -23,8 +23,8 @@ Vector6f Drone::getTorque()
 	Vector6f tau = Vector6f::Zero();
 
 	if (IsKeyDown(KEY_C) && IsKeyDown(KEY_LEFT_SHIFT)) {
-		std::println("Forcing the position {} and rotation {}", m_rlModel.position, m_rlModel.rotation);
-		forceStop();
+		std::println("Forcing the position {} and rotation {}", m_rlModel.spawnPosition, m_rlModel.rotation);
+		forceStop(m_rlModel.spawnPosition, m_rlModel.rotation);
 		return tau;
 	}
 
@@ -92,18 +92,21 @@ Vector6f Drone::getTorqueGamepad()
 	};
 
 	// std::println("BEFORE: Gamepad axis: [{}, {}, {}, {}]", gamepadAxes[0], gamepadAxes[1], gamepadAxes[2], gamepadAxes[3]);
-	std::replace_if(std::execution::par_unseq, gamepadAxes.begin(), gamepadAxes.end(), [this](const float &f) { return f < 0.01; }, 0);
 	// for (auto &axis : gamepadAxes) {
 	// 	if (std::abs(axis) < 0.1f) axis = 0;
 	// }
-	std::print("AFTER: Gamepad axis: [{:0.4f}, {:0.4f}, {:0.4f}, {:0.4f}]\r", gamepadAxes[0], gamepadAxes[1], gamepadAxes[2], gamepadAxes[3]);
+	std::replace_if(std::execution::par_unseq, gamepadAxes.begin(), gamepadAxes.end(), [this](const float &f) { return std::abs(f) < 0.7; }, 0);
+	std::println("AFTER: Gamepad axis: [{:0.4f}, {:0.4f}, {:0.4f}, {:0.4f}]", gamepadAxes[0], gamepadAxes[1], gamepadAxes[2], gamepadAxes[3]);
 
 	Vector6f tau = Vector6f::Zero();
 	// tau[0] = -gamepadAxes[0] * m_rlModel.dThrust;
-	tau[2] = -gamepadAxes[GAMEPAD_AXIS_LEFT_Y] * m_rlModel.dThrust;
-	tau[3] = -gamepadAxes[GAMEPAD_AXIS_RIGHT_Y] * m_rlModel.dMoment;
-	tau[4] = -gamepadAxes[GAMEPAD_AXIS_LEFT_X] * m_rlModel.dMoment;
-	tau[5] = gamepadAxes[GAMEPAD_AXIS_RIGHT_X] * m_rlModel.dMoment;
+	tau[2] = -gamepadAxes[GAMEPAD_AXIS_LEFT_Y] * m_rlModel.thrust.y;
+	tau[3] = -gamepadAxes[GAMEPAD_AXIS_RIGHT_Y] * m_rlModel.moment.y;
+	tau[4] = -gamepadAxes[GAMEPAD_AXIS_RIGHT_X] * m_rlModel.moment.y;
+	tau[5] = -gamepadAxes[GAMEPAD_AXIS_LEFT_X] * m_rlModel.moment.y;
+
+	// Damping when no input
+	tau[0] *= 0.96f;
 
 	return tau;
 }
