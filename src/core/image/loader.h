@@ -40,6 +40,7 @@ struct Model
 
 	std::string modelPath;
 	std::string texturePath;
+	Vector3 spawnPosition;
 	Vector3 position;
 	Vector3 rotation;
 	Vector3 gravity;

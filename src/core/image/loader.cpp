@@ -30,6 +30,7 @@ rl::Model rl::Model::fromFile(const rl::Path &configPath)
 	// Read default vectors
 	std::array<float, 3> read = jsonConfig.value("position", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
 	config.position = Vector3{ read[0], read[1], read[2] };
+	config.spawnPosition = config.position;
 
 	read = jsonConfig.value("rotation", std::array<float, 3>{ 0.0f, 0.0f, 0.0f });
 	config.rotation = Vector3{ read[0], read[1], read[2] };
