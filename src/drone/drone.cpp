@@ -68,11 +68,11 @@ Vector6f Drone::getTorqueKeyboard()
 	if (IsKeyDown(KEY_W)) tau[3] += dM;
 	else if (IsKeyDown(KEY_S)) tau[3] -= dM;
 
-	if (IsKeyDown(KEY_Q)) tau[4] += dM;
-	else if (IsKeyDown(KEY_E)) tau[4] -= dM;
+	if (IsKeyDown(KEY_D)) tau[4] -= dM;
+	else if (IsKeyDown(KEY_A)) tau[4] += dM;
 
-	if (IsKeyDown(KEY_D)) tau[5] -= dM;
-	else if (IsKeyDown(KEY_A)) tau[5] += dM;
+	if (IsKeyDown(KEY_Q)) tau[5] += dM;
+	else if (IsKeyDown(KEY_E)) tau[5] -= dM;
 
 	if (IsKeyDown(KEY_MINUS))
 		m_rlModel.scale -= 0.01f;
