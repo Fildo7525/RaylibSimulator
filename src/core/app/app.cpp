@@ -101,6 +101,9 @@ void Application::run()
 				m_camera.up = rotate(m_objects[idx], model.camera.up);
 				m_camera.position = m_camera.target + rotate(m_objects[idx], model.camera.offset);
 			}
+			else {
+				m_camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+			}
 
 
 			BeginMode3D(m_camera);
