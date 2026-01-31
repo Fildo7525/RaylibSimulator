@@ -15,6 +15,7 @@ target_include_directories(
 	image_lib
 PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${eigen_SOURCE_DIR}
 )
 
 target_link_libraries(
@@ -22,5 +23,4 @@ target_link_libraries(
 PUBLIC
 	raylib
 	nlohmann_json::nlohmann_json
-	Eigen3::Eigen
 )

@@ -22,6 +22,13 @@ FetchContent_Declare(
 	SYSTEM
 )
 
+FetchContent_Declare(
+  eigen
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG        5.0.0  # Use the latest stable tag
+)
+
+FetchContent_MakeAvailable(eigen)
 FetchContent_MakeAvailable(rib)
 FetchContent_MakeAvailable(json)
 
@@ -35,8 +42,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_definitions(-DPLANE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/plane.json")
 add_definitions(-DDRONE_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/drone.json")
 add_definitions(-DSPACESHIP_CONFIG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/spaceship.json")
-
-find_package(Eigen3 3.4 REQUIRED)
 
 set(SOURCES
 	main.cpp
