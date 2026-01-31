@@ -9,13 +9,15 @@ class Drone
 public:
 	static rl::Object::Ptr create(const rl::Model& model)
 	{
-		return std::make_shared<Drone>(model);
+		return std::shared_ptr<Drone>(new Drone(model));
 	}
-
-	explicit Drone(const rl::Model& model);
-	~Drone();
 
 	Vector6f getTorque();
 	Vector6f getTorqueKeyboard();
 	Vector6f getTorqueGamepad();
+
+	~Drone();
+
+private:
+	explicit Drone(const rl::Model& model);
 };

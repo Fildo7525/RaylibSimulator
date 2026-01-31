@@ -9,11 +9,12 @@ class Spaceship
 public:
 	static rl::Object::Ptr create(const rl::Model& model)
 	{
-		return std::make_shared<Spaceship>(model);
+		return std::shared_ptr<Spaceship>(new Spaceship(model));
 	}
 
-	Spaceship(const rl::Model& model);
+	Vector6f getTorque() override;
 	~Spaceship();
 
-	Vector6f getTorque() override;
+private:
+	Spaceship(const rl::Model& model);
 };

@@ -9,13 +9,14 @@ class Plane
 public:
 	static rl::Object::Ptr create(const rl::Model& model)
 	{
-		return std::make_shared<Plane>(model);
+		return std::shared_ptr<Plane>(new Plane(model));
 	}
 
-	explicit Plane(const rl::Model& model);
+	Vector6f getTorque() override;
 	~Plane();
 
-	Vector6f getTorque() override;
+private:
+	explicit Plane(const rl::Model& model);
 
 private:
 	const float m_wingArea;
