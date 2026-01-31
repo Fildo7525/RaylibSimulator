@@ -32,7 +32,14 @@ FetchContent_MakeAvailable(eigen)
 FetchContent_MakeAvailable(rib)
 FetchContent_MakeAvailable(json)
 
-set(CMAKE_CXX_COMPILER /usr/bin/g++-14)
+
+if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "14")
+	message(STATUS "Default C++ compiler version is 14 or higher.")
+else()
+	message(STATUS "Setting the compiler path to /usr/bin/g++-14 as at least this version is needed.")
+	set(CMAKE_CXX_COMPILER /usr/bin/g++-14)
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
